@@ -1,0 +1,12 @@
+src/
+tsconfig.json
+tsup.config.ts
+tailwind.config.ts
+postcss.config.js
+.gitignore
+.npmignore
+*.tsbuildinfo
+node_modules/
+.vscode/
+.idea/
+
