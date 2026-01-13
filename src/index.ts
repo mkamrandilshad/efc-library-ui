@@ -155,6 +155,13 @@ export {
   DialogDescription,
 } from "./components/dialog";
 
+// Date Picker
+export { DatePicker, DatePickerInput } from "./components/date-picker";
+export type {
+  DatePickerProps,
+  DatePickerInputProps,
+} from "./components/date-picker";
+
 // Drawer
 export {
   Drawer,
@@ -272,6 +279,10 @@ export { Kbd, KbdGroup } from "./components/kbd";
 // Label
 export { Label } from "./components/label";
 
+// Loading Overlay
+export { LoadingOverlay } from "./components/loading-overlay";
+export type { LoadingOverlayProps } from "./components/loading-overlay";
+
 // Menubar
 export {
   Menubar,
@@ -352,6 +363,26 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
 } from "./components/select";
+
+// Select Multiple
+export {
+  SelectMultiple,
+  SelectMultipleTrigger,
+  SelectMultipleContent,
+  SelectMultipleItem,
+  SelectMultipleGroup,
+  SelectMultipleSeparator,
+  SelectMultipleBadges,
+} from "./components/select-multiple";
+export type {
+  SelectMultipleProps,
+  SelectMultipleTriggerProps,
+  SelectMultipleContentProps,
+  SelectMultipleItemProps,
+  SelectMultipleGroupProps,
+  SelectMultipleSeparatorProps,
+  SelectMultipleBadgesProps,
+} from "./components/select-multiple";
 
 // Separator
 export { Separator } from "./components/separator";

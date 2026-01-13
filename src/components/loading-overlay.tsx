@@ -5,7 +5,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/spinner"
 
-interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface LoadingOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
   isLoading?: boolean
   loadingText?: string
   spinnerSize?: "sm" | "md" | "lg"

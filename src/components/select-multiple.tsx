@@ -30,7 +30,7 @@ const useSelectMultiple = () => {
   return context
 }
 
-interface SelectMultipleProps {
+export interface SelectMultipleProps {
   value?: string[]
   defaultValue?: string[]
   onValueChange?: (value: string[]) => void
@@ -99,7 +99,7 @@ const SelectMultiple = React.forwardRef<
 )
 SelectMultiple.displayName = "SelectMultiple"
 
-interface SelectMultipleTriggerProps
+export interface SelectMultipleTriggerProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   placeholder?: string
   maxDisplay?: number
@@ -151,7 +151,7 @@ const SelectMultipleTrigger = React.forwardRef<
 )
 SelectMultipleTrigger.displayName = "SelectMultipleTrigger"
 
-interface SelectMultipleContentProps
+export interface SelectMultipleContentProps
   extends React.ComponentPropsWithoutRef<typeof PopoverContent> {
   maxHeight?: string
 }
@@ -190,7 +190,7 @@ const SelectMultipleContent = React.forwardRef<
 )
 SelectMultipleContent.displayName = "SelectMultipleContent"
 
-interface SelectMultipleItemProps
+export interface SelectMultipleItemProps
   extends React.ComponentPropsWithoutRef<"div"> {
   value: string
   label?: string
@@ -225,7 +225,7 @@ const SelectMultipleItem = React.forwardRef<
 })
 SelectMultipleItem.displayName = "SelectMultipleItem"
 
-interface SelectMultipleGroupProps
+export interface SelectMultipleGroupProps
   extends React.HTMLAttributes<HTMLDivElement> {
   label?: string
 }
@@ -247,7 +247,7 @@ const SelectMultipleGroup = React.forwardRef<
 })
 SelectMultipleGroup.displayName = "SelectMultipleGroup"
 
-interface SelectMultipleSeparatorProps
+export interface SelectMultipleSeparatorProps
   extends React.HTMLAttributes<HTMLDivElement> {}
 
 const SelectMultipleSeparator = React.forwardRef<
@@ -264,7 +264,7 @@ const SelectMultipleSeparator = React.forwardRef<
 })
 SelectMultipleSeparator.displayName = "SelectMultipleSeparator"
 
-interface SelectMultipleBadgesProps
+export interface SelectMultipleBadgesProps
   extends React.HTMLAttributes<HTMLDivElement> {
   onRemove?: (value: string) => void
   maxDisplay?: number
