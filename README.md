@@ -339,3 +339,31 @@ efc-ui-library/
 
 MIT
 
+## Version Compatibility
+
+### React
+- **Supported:** React 18.0.0 - 18.x.x
+- **Tested against:** React 18.0.0, 18.2.0, 18.3.0
+- **Future:** React 19 compatibility will be tested before release
+
+### Node.js
+- **Minimum:** Node.js 18.0.0
+- **Recommended:** Node.js 20.x LTS
+- **Tested against:** Node.js 18.x, 20.x, 22.x
+
+### Update Policy
+- Minor and patch updates are automatically tested via CI/CD
+- Major version updates require manual testing and approval
+- Breaking changes will be documented in CHANGELOG.md
+
+## Pre-Release Checklist
+
+- [ ] Test against latest React 18.x version
+- [ ] Test against latest Node.js LTS
+- [ ] Run compatibility test matrix
+- [ ] Check for deprecation warnings
+- [ ] Verify all peer dependencies are compatible
+- [ ] Update CHANGELOG.md with compatibility notes
+- [ ] Test in Next.js 13+ and 14+
+- [ ] Test in Vite projects
+- [ ] Verify TypeScript compilation succeeds

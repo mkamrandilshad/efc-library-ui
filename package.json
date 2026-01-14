@@ -21,7 +21,9 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:compatibility": "node scripts/test-compatibility.js",
+    "test:react-latest": "npm install --no-save react@latest react-dom@latest && npm run build && npm run type-check"
   },
   "keywords": [
     "react",
@@ -34,8 +36,16 @@
   "author": "",
   "license": "MIT",
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": ">=18.0.0 <19.0.0",
+    "react-dom": ">=18.0.0 <19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -94,5 +104,9 @@
     "tailwindcss": "^3.4.0",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }
