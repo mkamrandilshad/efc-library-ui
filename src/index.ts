@@ -7,6 +7,12 @@ export { cn } from "./lib/utils";
 // Export hooks
 export { useIsMobile } from "./hooks/use-mobile";
 
+// Export theme types
+export type { ThemeColors, ThemeProviderProps } from "./lib/theme";
+
+// Theme Provider
+export { ThemeProvider } from "./components/theme-provider";
+
 // Accordion
 export {
   Accordion,

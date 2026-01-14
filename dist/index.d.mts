@@ -1,9 +1,9 @@
 import { ClassValue } from 'clsx';
+import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as React$1 from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import * as class_variance_authority_types from 'class-variance-authority/types';
 import { VariantProps } from 'class-variance-authority';
-import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
@@ -49,13 +49,124 @@ declare function cn(...inputs: ClassValue[]): string;
 
 declare function useIsMobile(): boolean;
 
+/**
+ * Theme configuration types for customizing component colors
+ */
+/**
+ * Base theme color tokens that can be customized
+ * All colors should be provided in HSL format without the hsl() wrapper
+ * Example: "222.2 47.4% 11.2%" instead of "hsl(222.2, 47.4%, 11.2%)"
+ */
+interface ThemeColors {
+    /** Background color */
+    background?: string;
+    /** Foreground/text color */
+    foreground?: string;
+    /** Card background color */
+    card?: string;
+    /** Card foreground/text color */
+    "card-foreground"?: string;
+    /** Popover background color */
+    popover?: string;
+    /** Popover foreground/text color */
+    "popover-foreground"?: string;
+    /** Primary brand color */
+    primary?: string;
+    /** Primary foreground/text color */
+    "primary-foreground"?: string;
+    /** Secondary color */
+    secondary?: string;
+    /** Secondary foreground/text color */
+    "secondary-foreground"?: string;
+    /** Muted color */
+    muted?: string;
+    /** Muted foreground/text color */
+    "muted-foreground"?: string;
+    /** Accent color */
+    accent?: string;
+    /** Accent foreground/text color */
+    "accent-foreground"?: string;
+    /** Destructive/error color */
+    destructive?: string;
+    /** Destructive foreground/text color */
+    "destructive-foreground"?: string;
+    /** Border color */
+    border?: string;
+    /** Input border color */
+    input?: string;
+    /** Focus ring color */
+    ring?: string;
+    /** Chart color 1 */
+    "chart-1"?: string;
+    /** Chart color 2 */
+    "chart-2"?: string;
+    /** Chart color 3 */
+    "chart-3"?: string;
+    /** Chart color 4 */
+    "chart-4"?: string;
+    /** Chart color 5 */
+    "chart-5"?: string;
+    /** Sidebar background color */
+    "sidebar-background"?: string;
+    /** Sidebar foreground/text color */
+    "sidebar-foreground"?: string;
+    /** Sidebar primary color */
+    "sidebar-primary"?: string;
+    /** Sidebar primary foreground/text color */
+    "sidebar-primary-foreground"?: string;
+    /** Sidebar accent color */
+    "sidebar-accent"?: string;
+    /** Sidebar accent foreground/text color */
+    "sidebar-accent-foreground"?: string;
+    /** Sidebar border color */
+    "sidebar-border"?: string;
+    /** Sidebar ring color */
+    "sidebar-ring"?: string;
+    /** Border radius value */
+    radius?: string;
+}
+/**
+ * Props for the ThemeProvider component
+ */
+interface ThemeProviderProps {
+    /** Light mode theme colors */
+    theme?: ThemeColors;
+    /** Dark mode theme colors */
+    darkTheme?: ThemeColors;
+    /** Optional scope selector (e.g., a CSS class or ID) to apply theme to a specific element instead of :root */
+    scope?: string;
+    /** Child components */
+    children: React.ReactNode;
+}
+
+/**
+ * ThemeProvider component that applies custom theme colors to all components
+ *
+ * @example
+ * ```tsx
+ * <ThemeProvider
+ *   theme={{
+ *     primary: '222.2 47.4% 11.2%',
+ *     'primary-foreground': '210 40% 98%',
+ *   }}
+ *   darkTheme={{
+ *     primary: '210 40% 98%',
+ *     'primary-foreground': '222.2 47.4% 11.2%',
+ *   }}
+ * >
+ *   <App />
+ * </ThemeProvider>
+ * ```
+ */
+declare function ThemeProvider({ theme, darkTheme, scope, children, }: ThemeProviderProps): react_jsx_runtime.JSX.Element;
+
 declare const Accordion: React$1.ForwardRefExoticComponent<(AccordionPrimitive.AccordionSingleProps | AccordionPrimitive.AccordionMultipleProps) & React$1.RefAttributes<HTMLDivElement>>;
 declare const AccordionItem: React$1.ForwardRefExoticComponent<Omit<AccordionPrimitive.AccordionItemProps & React$1.RefAttributes<HTMLDivElement>, "ref"> & React$1.RefAttributes<HTMLDivElement>>;
 declare const AccordionTrigger: React$1.ForwardRefExoticComponent<Omit<AccordionPrimitive.AccordionTriggerProps & React$1.RefAttributes<HTMLButtonElement>, "ref"> & React$1.RefAttributes<HTMLButtonElement>>;
 declare const AccordionContent: React$1.ForwardRefExoticComponent<Omit<AccordionPrimitive.AccordionContentProps & React$1.RefAttributes<HTMLDivElement>, "ref"> & React$1.RefAttributes<HTMLDivElement>>;
 
 declare const Alert: React$1.ForwardRefExoticComponent<React$1.HTMLAttributes<HTMLDivElement> & VariantProps<(props?: ({
-    variant?: "default" | "destructive" | null | undefined;
+    variant?: "destructive" | "default" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string> & React$1.RefAttributes<HTMLDivElement>>;
 declare const AlertTitle: React$1.ForwardRefExoticComponent<React$1.HTMLAttributes<HTMLHeadingElement> & React$1.RefAttributes<HTMLParagraphElement>>;
 declare const AlertDescription: React$1.ForwardRefExoticComponent<React$1.HTMLAttributes<HTMLParagraphElement> & React$1.RefAttributes<HTMLParagraphElement>>;
@@ -85,7 +196,7 @@ declare const AvatarImage: React$1.ForwardRefExoticComponent<Omit<AvatarPrimitiv
 declare const AvatarFallback: React$1.ForwardRefExoticComponent<Omit<AvatarPrimitive.AvatarFallbackProps & React$1.RefAttributes<HTMLSpanElement>, "ref"> & React$1.RefAttributes<HTMLSpanElement>>;
 
 declare const badgeVariants: (props?: ({
-    variant?: "default" | "destructive" | "outline" | "secondary" | null | undefined;
+    variant?: "secondary" | "destructive" | "default" | "outline" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string;
 interface BadgeProps extends React$1.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
 }
@@ -110,7 +221,7 @@ declare const BreadcrumbEllipsis: {
 };
 
 declare const buttonVariants: (props?: ({
-    variant?: "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+    variant?: "link" | "secondary" | "destructive" | "default" | "outline" | "ghost" | null | undefined;
     size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string;
 interface ButtonProps extends React$1.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
@@ -245,7 +356,7 @@ declare const CommandInput: React$1.ForwardRefExoticComponent<Omit<Omit<Pick<Pic
     ref?: React$1.Ref<HTMLInputElement>;
 } & {
     asChild?: boolean;
-}, "key" | "asChild" | keyof React$1.InputHTMLAttributes<HTMLInputElement>>, "onChange" | "value" | "type"> & {
+}, "key" | "asChild" | keyof React$1.InputHTMLAttributes<HTMLInputElement>>, "value" | "onChange" | "type"> & {
     value?: string;
     onValueChange?: (search: string) => void;
 } & React$1.RefAttributes<HTMLInputElement>, "ref"> & React$1.RefAttributes<HTMLInputElement>>;
@@ -289,7 +400,7 @@ declare const CommandItem: React$1.ForwardRefExoticComponent<Omit<{
     ref?: React$1.Ref<HTMLDivElement>;
 } & {
     asChild?: boolean;
-}, "key" | keyof React$1.HTMLAttributes<HTMLDivElement> | "asChild">, "onSelect" | "disabled" | "value"> & {
+}, "key" | keyof React$1.HTMLAttributes<HTMLDivElement> | "asChild">, "value" | "onSelect" | "disabled"> & {
     disabled?: boolean;
     onSelect?: (value: string) => void;
     value?: string;
@@ -478,7 +589,7 @@ declare function InputGroupText({ className, ...props }: React$1.ComponentProps<
 declare function InputGroupInput({ className, ...props }: React$1.ComponentProps<"input">): react_jsx_runtime.JSX.Element;
 declare function InputGroupTextarea({ className, ...props }: React$1.ComponentProps<"textarea">): react_jsx_runtime.JSX.Element;
 
-declare const InputOTP: React$1.ForwardRefExoticComponent<(Omit<Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "maxLength" | "textAlign" | "onComplete" | "pushPasswordManagerStrategy" | "pasteTransformer" | "containerClassName" | "noScriptCSSFallback"> & {
+declare const InputOTP: React$1.ForwardRefExoticComponent<(Omit<Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "maxLength" | "textAlign" | "onComplete" | "pushPasswordManagerStrategy" | "pasteTransformer" | "containerClassName" | "noScriptCSSFallback"> & {
     value?: string;
     onChange?: (newValue: string) => unknown;
     maxLength: number;
@@ -491,7 +602,7 @@ declare const InputOTP: React$1.ForwardRefExoticComponent<(Omit<Omit<React$1.Inp
 } & {
     render: (props: input_otp.RenderProps) => React$1.ReactNode;
     children?: never;
-} & React$1.RefAttributes<HTMLInputElement>, "ref"> | Omit<Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "maxLength" | "textAlign" | "onComplete" | "pushPasswordManagerStrategy" | "pasteTransformer" | "containerClassName" | "noScriptCSSFallback"> & {
+} & React$1.RefAttributes<HTMLInputElement>, "ref"> | Omit<Omit<React$1.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "maxLength" | "textAlign" | "onComplete" | "pushPasswordManagerStrategy" | "pasteTransformer" | "containerClassName" | "noScriptCSSFallback"> & {
     value?: string;
     onChange?: (newValue: string) => unknown;
     maxLength: number;
@@ -805,4 +916,4 @@ declare const ToggleGroupItem: React$1.ForwardRefExoticComponent<Omit<ToggleGrou
     size?: "default" | "sm" | "lg" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string> & React$1.RefAttributes<HTMLButtonElement>>;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Avatar, AvatarFallback, AvatarImage, Badge, type BadgeProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, type ButtonProps, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, DatePicker, DatePickerInput, type DatePickerInputProps, type DatePickerProps, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label, LoadingOverlay, type LoadingOverlayProps, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, type SelectMultipleBadgesProps, SelectMultipleContent, type SelectMultipleContentProps, SelectMultipleGroup, type SelectMultipleGroupProps, SelectMultipleItem, type SelectMultipleItemProps, type SelectMultipleProps, SelectMultipleSeparator, type SelectMultipleSeparatorProps, SelectMultipleTrigger, type SelectMultipleTriggerProps, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Avatar, AvatarFallback, AvatarImage, Badge, type BadgeProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, type ButtonProps, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, DatePicker, DatePickerInput, type DatePickerInputProps, type DatePickerProps, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label, LoadingOverlay, type LoadingOverlayProps, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, type SelectMultipleBadgesProps, SelectMultipleContent, type SelectMultipleContentProps, SelectMultipleGroup, type SelectMultipleGroupProps, SelectMultipleItem, type SelectMultipleItemProps, type SelectMultipleProps, SelectMultipleSeparator, type SelectMultipleSeparatorProps, SelectMultipleTrigger, type SelectMultipleTriggerProps, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, type ThemeColors, ThemeProvider, type ThemeProviderProps, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
