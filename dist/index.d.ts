@@ -914,6 +914,8 @@ interface TableHeaderCellProps extends React$1.ThHTMLAttributes<HTMLTableCellEle
         index: number;
     };
     hideOnMobile?: boolean;
+    /** Custom dropdown menu content for nested menus. When provided, this will be used instead of the flat filters list. */
+    dropdownChildren?: React$1.ReactNode;
 }
 declare const TableHeaderCell: React$1.ForwardRefExoticComponent<TableHeaderCellProps & React$1.RefAttributes<HTMLTableCellElement>>;
 

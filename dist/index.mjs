@@ -4415,6 +4415,7 @@ var TableHeaderCell = React39.forwardRef(
     onFilterSort,
     dropdownProps,
     hideOnMobile = false,
+    dropdownChildren,
     className,
     ...props
   }, ref) => {
@@ -4446,7 +4447,8 @@ var TableHeaderCell = React39.forwardRef(
             {
               index: dropdownProps.index,
               filters: dropdownProps.filters,
-              handle: dropdownProps.handle
+              handle: dropdownProps.handle,
+              children: dropdownChildren
             }
           )
         ] })

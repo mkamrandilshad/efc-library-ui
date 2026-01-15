@@ -15,6 +15,8 @@ export interface TableHeaderCellProps
   onFilterSort?: (filterValue: string) => void
   dropdownProps?: Omit<DropdownSorterProps, "index"> & { index: number }
   hideOnMobile?: boolean
+  /** Custom dropdown menu content for nested menus. When provided, this will be used instead of the flat filters list. */
+  dropdownChildren?: React.ReactNode
 }
 
 export const TableHeaderCell = React.forwardRef<
@@ -29,6 +31,7 @@ export const TableHeaderCell = React.forwardRef<
       onFilterSort,
       dropdownProps,
       hideOnMobile = false,
+      dropdownChildren,
       className,
       ...props
     },
@@ -67,7 +70,9 @@ export const TableHeaderCell = React.forwardRef<
                 index={dropdownProps.index}
                 filters={dropdownProps.filters}
                 handle={dropdownProps.handle}
-              />
+              >
+                {dropdownChildren}
+              </DropdownSorter>
             )}
           </div>
         )}
