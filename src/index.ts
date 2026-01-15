@@ -462,6 +462,18 @@ export {
   TableCaption,
 } from "./components/table";
 
+// Table Dropdown Sorter
+export {
+  DropdownSorter,
+  type DropdownSorterProps,
+} from "./components/table-dropdown-sorter";
+
+// Table Header Cell (Optional Helper)
+export {
+  TableHeaderCell,
+  type TableHeaderCellProps,
+} from "./components/table-header-cell";
+
 // Tabs
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/tabs";
 
