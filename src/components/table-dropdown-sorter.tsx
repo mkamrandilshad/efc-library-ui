@@ -3,15 +3,11 @@
 import * as React from "react"
 import { ChevronDown } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/dropdown-menu"
 
@@ -61,10 +57,3 @@ export const DropdownSorter = React.forwardRef<
 })
 
 DropdownSorter.displayName = "DropdownSorter"
-
-// Export sub-components for nested menu support
-export {
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-} from "@/components/dropdown-menu"

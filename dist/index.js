@@ -4361,18 +4361,18 @@ var Table = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @
   "table",
   {
     ref,
-    className: cn("w-full caption-bottom text-sm", className),
+    className: cn("w-full caption-bottom text-sm rounded print:w-full print:min-w-full print:table-auto", className),
     ...props
   }
 ) }));
 Table.displayName = "Table";
-var TableHeader = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("[&_tr]:border-b", className), ...props }));
+var TableHeader = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx("thead", { ref, className: cn("[&_tr]:border-b table-header-group", className), ...props }));
 TableHeader.displayName = "TableHeader";
 var TableBody = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   "tbody",
   {
     ref,
-    className: cn("[&_tr:last-child]:border-0", className),
+    className: cn("[&_tr:last-child]:border-0 table-body-group", className),
     ...props
   }
 ));
@@ -4431,6 +4431,81 @@ var TableCaption = React39__namespace.forwardRef(({ className, ...props }, ref) 
   }
 ));
 TableCaption.displayName = "TableCaption";
+var DropdownSorter = React39__namespace.forwardRef(({ index, filters, handle, children, ...props }, ref) => {
+  return /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+    /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs(
+      Button,
+      {
+        ref,
+        variant: "ghost",
+        size: "icon",
+        className: "h-6 w-6 p-0",
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsx(lucideReact.ChevronDown, { className: "h-4 w-4" }),
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "sr-only", children: "Open filter menu" })
+        ]
+      }
+    ) }),
+    /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { align: "start", children: children ? children : /* @__PURE__ */ jsxRuntime.jsx(jsxRuntime.Fragment, { children: filters.map((filter) => /* @__PURE__ */ jsxRuntime.jsx(
+      DropdownMenuItem,
+      {
+        onClick: () => handle(filter),
+        children: filter.label
+      },
+      filter.value
+    )) }) })
+  ] });
+});
+DropdownSorter.displayName = "DropdownSorter";
+var TableHeaderCell = React39__namespace.forwardRef(
+  ({
+    label,
+    type = "simple",
+    onSort,
+    onFilterSort,
+    dropdownProps,
+    hideOnMobile = false,
+    className,
+    ...props
+  }, ref) => {
+    const baseClasses = "text-start print:whitespace-normal";
+    const mobileClasses = hideOnMobile ? "max-3xl:hidden print:table-cell" : "";
+    const currentFilter = dropdownProps?.filters?.[dropdownProps.index];
+    return /* @__PURE__ */ jsxRuntime.jsx(
+      TableHead,
+      {
+        ref,
+        className: cn(baseClasses, mobileClasses, className),
+        ...props,
+        children: type === "simple" ? /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", onClick: onSort, children: label }) : /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-start space-x-0", children: [
+          /* @__PURE__ */ jsxRuntime.jsx(
+            Button,
+            {
+              className: "px-0",
+              variant: "link",
+              onClick: () => {
+                if (onFilterSort && currentFilter) {
+                  onFilterSort(currentFilter.value);
+                }
+              },
+              children: currentFilter?.label || label
+            }
+          ),
+          dropdownProps && /* @__PURE__ */ jsxRuntime.jsx(
+            DropdownSorter,
+            {
+              index: dropdownProps.index,
+              filters: dropdownProps.filters,
+              handle: dropdownProps.handle
+            }
+          )
+        ] })
+      }
+    );
+  }
+);
+TableHeaderCell.displayName = "TableHeaderCell";
 var Tabs = TabsPrimitive__namespace.Root;
 var TabsList = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.List,
@@ -4648,6 +4723,7 @@ exports.DropdownMenuSub = DropdownMenuSub;
 exports.DropdownMenuSubContent = DropdownMenuSubContent;
 exports.DropdownMenuSubTrigger = DropdownMenuSubTrigger;
 exports.DropdownMenuTrigger = DropdownMenuTrigger;
+exports.DropdownSorter = DropdownSorter;
 exports.Empty = Empty;
 exports.EmptyContent = EmptyContent;
 exports.EmptyDescription = EmptyDescription;
@@ -4803,6 +4879,7 @@ exports.TableCell = TableCell;
 exports.TableFooter = TableFooter;
 exports.TableHead = TableHead;
 exports.TableHeader = TableHeader;
+exports.TableHeaderCell = TableHeaderCell;
 exports.TableRow = TableRow;
 exports.Tabs = Tabs;
 exports.TabsContent = TabsContent;
