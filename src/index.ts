@@ -474,6 +474,13 @@ export {
   type TableHeaderCellProps,
 } from "./components/table-header-cell";
 
+// Custom Table
+export {
+  CustomTable,
+  type ColumnDefinition,
+  type CustomTableProps,
+} from "./components/custom-table";
+
 // Tabs
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/tabs";
 
