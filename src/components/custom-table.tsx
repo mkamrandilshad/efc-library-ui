@@ -167,30 +167,6 @@ export const CustomTable = React.forwardRef<
       <Table ref={ref} className={className} {...props}>
         <TableHeader>
           <TableRow>
-            {/* Selection column header */}
-            {showSelection && (
-              <TableHead className="flex items-center justify-end mr-2 space-x-2 print:hidden">
-                <Checkbox
-                  checked={isSelectAll || false}
-                  onCheckedChange={(checked) => {
-                    onSelectAll?.(checked === true)
-                  }}
-                />
-                {bulkActions && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {renderBulkActions()}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </TableHead>
-            )}
-
             {/* Data columns */}
             {columns.map((column) => {
               if (column.type === "dropdown") {
@@ -221,6 +197,30 @@ export const CustomTable = React.forwardRef<
                 />
               )
             })}
+            
+            {/* Selection column header */}
+            {showSelection && (
+              <TableHead className="flex items-center justify-end mr-2 space-x-2 print:hidden">
+                <Checkbox
+                  checked={isSelectAll || false}
+                  onCheckedChange={(checked) => {
+                    onSelectAll?.(checked === true)
+                  }}
+                />
+                {bulkActions && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {renderBulkActions()}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </TableHead>
+            )}
 
             {/* Actions column header */}
             {showActions && !showSelection && (
