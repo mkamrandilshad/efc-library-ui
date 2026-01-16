@@ -4524,21 +4524,6 @@ var CustomTable = React39.forwardRef(
     };
     return /* @__PURE__ */ jsxs(Table, { ref, className, ...props, children: [
       /* @__PURE__ */ jsx(TableHeader, { children: /* @__PURE__ */ jsxs(TableRow, { children: [
-        showSelection && /* @__PURE__ */ jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
-          /* @__PURE__ */ jsx(
-            Checkbox,
-            {
-              checked: isSelectAll || false,
-              onCheckedChange: (checked) => {
-                onSelectAll?.(checked === true);
-              }
-            }
-          ),
-          bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
-            /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
-            /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
-          ] })
-        ] }),
         columns.map((column) => {
           if (column.type === "dropdown") {
             return /* @__PURE__ */ jsx(
@@ -4570,6 +4555,21 @@ var CustomTable = React39.forwardRef(
             column.key
           );
         }),
+        showSelection && /* @__PURE__ */ jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
+          /* @__PURE__ */ jsx(
+            Checkbox,
+            {
+              checked: isSelectAll || false,
+              onCheckedChange: (checked) => {
+                onSelectAll?.(checked === true);
+              }
+            }
+          ),
+          bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
+          ] })
+        ] }),
         showActions && !showSelection && /* @__PURE__ */ jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
           /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
           /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
