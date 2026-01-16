@@ -4,7 +4,7 @@ import * as React39 from 'react';
 import { useMemo } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import { ChevronDown, ArrowLeft, ArrowRight, Check, X, Search, ChevronRight, Circle, Calendar as Calendar$1, Dot, ChevronUp, PanelLeft, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, Loader2Icon, MoreHorizontal, ChevronLeft, GripVertical, Loader2, XOctagon, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
+import { ChevronDown, ArrowLeft, ArrowRight, Check, X, Search, ChevronRight, Circle, Calendar as Calendar$1, Dot, ChevronUp, PanelLeft, MoreVertical, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon, Loader2Icon, MoreHorizontal, ChevronLeft, GripVertical, Loader2, XOctagon, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { Slot } from '@radix-ui/react-slot';
@@ -4346,6 +4346,7 @@ var TableRow = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__
       "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
       className
     ),
+    "data-slot": "table-row",
     ...props
   }
 ));
@@ -4358,6 +4359,7 @@ var TableHead = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE_
       "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
       className
     ),
+    "data-slot": "table-head",
     ...props
   }
 ));
@@ -4367,6 +4369,7 @@ var TableCell = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE_
   {
     ref,
     className: cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className),
+    "data-slot": "table-cell",
     ...props
   }
 ));
@@ -4457,6 +4460,159 @@ var TableHeaderCell = React39.forwardRef(
   }
 );
 TableHeaderCell.displayName = "TableHeaderCell";
+var isRowSelected = (selectedRows, index) => {
+  if (!selectedRows) return false;
+  if (Array.isArray(selectedRows)) {
+    if (selectedRows.length === 0) return false;
+    if (typeof selectedRows[0] === "boolean") {
+      return selectedRows[index] === true;
+    }
+    return selectedRows.includes(index);
+  }
+  if (selectedRows instanceof Set) {
+    return selectedRows.has(index);
+  }
+  return false;
+};
+var getSelectedCount = (selectedRows) => {
+  if (!selectedRows) return 0;
+  if (Array.isArray(selectedRows)) {
+    if (selectedRows.length === 0) return 0;
+    if (typeof selectedRows[0] === "boolean") {
+      return selectedRows.filter(Boolean).length;
+    }
+    return selectedRows.length;
+  }
+  if (selectedRows instanceof Set) {
+    return selectedRows.size;
+  }
+  return 0;
+};
+var CustomTable = React39.forwardRef(
+  ({
+    columns,
+    data,
+    selectedRows,
+    onRowSelect,
+    isSelectAll,
+    onSelectAll,
+    bulkActions,
+    rowActions,
+    caption,
+    showSelection = false,
+    showActions = false,
+    className,
+    ...props
+  }, ref) => {
+    const selectedCount = getSelectedCount(selectedRows);
+    const renderBulkActions = () => {
+      if (!bulkActions) return null;
+      if (typeof bulkActions === "function") {
+        return bulkActions(selectedCount);
+      }
+      return bulkActions;
+    };
+    const renderRowActions = (row, index) => {
+      if (!rowActions) return null;
+      if (typeof rowActions === "function") {
+        return rowActions(row, index);
+      }
+      return rowActions;
+    };
+    const getCellValue = (row, key) => {
+      return row?.[key] ?? "";
+    };
+    return /* @__PURE__ */ jsxs(Table, { ref, className, ...props, children: [
+      /* @__PURE__ */ jsx(TableHeader, { children: /* @__PURE__ */ jsxs(TableRow, { children: [
+        showSelection && /* @__PURE__ */ jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
+          /* @__PURE__ */ jsx(
+            Checkbox,
+            {
+              checked: isSelectAll || false,
+              onCheckedChange: (checked) => {
+                onSelectAll?.(checked === true);
+              }
+            }
+          ),
+          bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
+          ] })
+        ] }),
+        columns.map((column) => {
+          if (column.type === "dropdown") {
+            return /* @__PURE__ */ jsx(
+              TableHeaderCell,
+              {
+                label: column.label,
+                type: "dropdown",
+                hideOnMobile: column.hideOnMobile,
+                dropdownProps: {
+                  index: column.currentFilterIndex ?? 0,
+                  filters: column.filters ?? [],
+                  handle: column.onFilterChange ?? (() => {
+                  })
+                },
+                onFilterSort: column.onFilterSort,
+                dropdownChildren: column.dropdownChildren
+              },
+              column.key
+            );
+          }
+          return /* @__PURE__ */ jsx(
+            TableHeaderCell,
+            {
+              label: column.label,
+              type: "simple",
+              hideOnMobile: column.hideOnMobile,
+              onSort: column.onSort
+            },
+            column.key
+          );
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
+        ] }) })
+      ] }) }),
+      /* @__PURE__ */ jsx(TableBody, { children: data.length === 0 ? /* @__PURE__ */ jsx(TableRow, { children: /* @__PURE__ */ jsx(
+        TableCell,
+        {
+          colSpan: columns.length + (showSelection ? 1 : 0) + (showActions ? 1 : 0),
+          className: "text-center text-muted-foreground",
+          children: "No data available"
+        }
+      ) }) : data.map((row, rowIndex) => /* @__PURE__ */ jsxs(TableRow, { children: [
+        showSelection && /* @__PURE__ */ jsxs(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
+          /* @__PURE__ */ jsx(
+            Checkbox,
+            {
+              checked: isRowSelected(selectedRows, rowIndex),
+              onCheckedChange: (checked) => {
+                onRowSelect?.(rowIndex, checked === true);
+              }
+            }
+          ),
+          rowActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+          ] })
+        ] }),
+        columns.map((column) => {
+          const value = getCellValue(row, column.key);
+          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
+          return /* @__PURE__ */ jsx(TableCell, { children: cellContent }, column.key);
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+        ] }) })
+      ] }, rowIndex)) }),
+      caption && /* @__PURE__ */ jsx(TableCaption, { children: caption })
+    ] });
+  }
+);
+CustomTable.displayName = "CustomTable";
 var Tabs = TabsPrimitive.Root;
 var TabsList = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
   TabsPrimitive.List,
@@ -4557,6 +4713,6 @@ var ToggleGroupItem = React39.forwardRef(({ className, children, variant, size, 
 });
 ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Avatar, AvatarFallback, AvatarImage, Badge, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent2 as CollapsibleContent, CollapsibleTrigger2 as CollapsibleTrigger, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, DatePicker, DatePickerInput, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownSorter, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item4 as Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label3 as Label, LoadingOverlay, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, Progress, RadioGroup4 as RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, SelectMultipleContent, SelectMultipleGroup, SelectMultipleItem, SelectMultipleSeparator, SelectMultipleTrigger, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableHeaderCell, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, ThemeProvider, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip2 as Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Avatar, AvatarFallback, AvatarImage, Badge, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent2 as CollapsibleContent, CollapsibleTrigger2 as CollapsibleTrigger, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, CustomTable, DatePicker, DatePickerInput, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownSorter, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item4 as Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label3 as Label, LoadingOverlay, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, Progress, RadioGroup4 as RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, SelectMultipleContent, SelectMultipleGroup, SelectMultipleItem, SelectMultipleSeparator, SelectMultipleTrigger, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableHeaderCell, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, Textarea, ThemeProvider, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip2 as Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

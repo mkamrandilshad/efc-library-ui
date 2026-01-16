@@ -4397,6 +4397,7 @@ var TableRow = React39__namespace.forwardRef(({ className, ...props }, ref) => /
       "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
       className
     ),
+    "data-slot": "table-row",
     ...props
   }
 ));
@@ -4409,6 +4410,7 @@ var TableHead = React39__namespace.forwardRef(({ className, ...props }, ref) => 
       "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
       className
     ),
+    "data-slot": "table-head",
     ...props
   }
 ));
@@ -4418,6 +4420,7 @@ var TableCell = React39__namespace.forwardRef(({ className, ...props }, ref) => 
   {
     ref,
     className: cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className),
+    "data-slot": "table-cell",
     ...props
   }
 ));
@@ -4508,6 +4511,159 @@ var TableHeaderCell = React39__namespace.forwardRef(
   }
 );
 TableHeaderCell.displayName = "TableHeaderCell";
+var isRowSelected = (selectedRows, index) => {
+  if (!selectedRows) return false;
+  if (Array.isArray(selectedRows)) {
+    if (selectedRows.length === 0) return false;
+    if (typeof selectedRows[0] === "boolean") {
+      return selectedRows[index] === true;
+    }
+    return selectedRows.includes(index);
+  }
+  if (selectedRows instanceof Set) {
+    return selectedRows.has(index);
+  }
+  return false;
+};
+var getSelectedCount = (selectedRows) => {
+  if (!selectedRows) return 0;
+  if (Array.isArray(selectedRows)) {
+    if (selectedRows.length === 0) return 0;
+    if (typeof selectedRows[0] === "boolean") {
+      return selectedRows.filter(Boolean).length;
+    }
+    return selectedRows.length;
+  }
+  if (selectedRows instanceof Set) {
+    return selectedRows.size;
+  }
+  return 0;
+};
+var CustomTable = React39__namespace.forwardRef(
+  ({
+    columns,
+    data,
+    selectedRows,
+    onRowSelect,
+    isSelectAll,
+    onSelectAll,
+    bulkActions,
+    rowActions,
+    caption,
+    showSelection = false,
+    showActions = false,
+    className,
+    ...props
+  }, ref) => {
+    const selectedCount = getSelectedCount(selectedRows);
+    const renderBulkActions = () => {
+      if (!bulkActions) return null;
+      if (typeof bulkActions === "function") {
+        return bulkActions(selectedCount);
+      }
+      return bulkActions;
+    };
+    const renderRowActions = (row, index) => {
+      if (!rowActions) return null;
+      if (typeof rowActions === "function") {
+        return rowActions(row, index);
+      }
+      return rowActions;
+    };
+    const getCellValue = (row, key) => {
+      return row?.[key] ?? "";
+    };
+    return /* @__PURE__ */ jsxRuntime.jsxs(Table, { ref, className, ...props, children: [
+      /* @__PURE__ */ jsxRuntime.jsx(TableHeader, { children: /* @__PURE__ */ jsxRuntime.jsxs(TableRow, { children: [
+        showSelection && /* @__PURE__ */ jsxRuntime.jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
+          /* @__PURE__ */ jsxRuntime.jsx(
+            Checkbox,
+            {
+              checked: isSelectAll || false,
+              onCheckedChange: (checked) => {
+                onSelectAll?.(checked === true);
+              }
+            }
+          ),
+          bulkActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderBulkActions() })
+          ] })
+        ] }),
+        columns.map((column) => {
+          if (column.type === "dropdown") {
+            return /* @__PURE__ */ jsxRuntime.jsx(
+              TableHeaderCell,
+              {
+                label: column.label,
+                type: "dropdown",
+                hideOnMobile: column.hideOnMobile,
+                dropdownProps: {
+                  index: column.currentFilterIndex ?? 0,
+                  filters: column.filters ?? [],
+                  handle: column.onFilterChange ?? (() => {
+                  })
+                },
+                onFilterSort: column.onFilterSort,
+                dropdownChildren: column.dropdownChildren
+              },
+              column.key
+            );
+          }
+          return /* @__PURE__ */ jsxRuntime.jsx(
+            TableHeaderCell,
+            {
+              label: column.label,
+              type: "simple",
+              hideOnMobile: column.hideOnMobile,
+              onSort: column.onSort
+            },
+            column.key
+          );
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderBulkActions() })
+        ] }) })
+      ] }) }),
+      /* @__PURE__ */ jsxRuntime.jsx(TableBody, { children: data.length === 0 ? /* @__PURE__ */ jsxRuntime.jsx(TableRow, { children: /* @__PURE__ */ jsxRuntime.jsx(
+        TableCell,
+        {
+          colSpan: columns.length + (showSelection ? 1 : 0) + (showActions ? 1 : 0),
+          className: "text-center text-muted-foreground",
+          children: "No data available"
+        }
+      ) }) : data.map((row, rowIndex) => /* @__PURE__ */ jsxRuntime.jsxs(TableRow, { children: [
+        showSelection && /* @__PURE__ */ jsxRuntime.jsxs(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
+          /* @__PURE__ */ jsxRuntime.jsx(
+            Checkbox,
+            {
+              checked: isRowSelected(selectedRows, rowIndex),
+              onCheckedChange: (checked) => {
+                onRowSelect?.(rowIndex, checked === true);
+              }
+            }
+          ),
+          rowActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+          ] })
+        ] }),
+        columns.map((column) => {
+          const value = getCellValue(row, column.key);
+          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
+          return /* @__PURE__ */ jsxRuntime.jsx(TableCell, { children: cellContent }, column.key);
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+        ] }) })
+      ] }, rowIndex)) }),
+      caption && /* @__PURE__ */ jsxRuntime.jsx(TableCaption, { children: caption })
+    ] });
+  }
+);
+CustomTable.displayName = "CustomTable";
 var Tabs = TabsPrimitive__namespace.Root;
 var TabsList = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
   TabsPrimitive__namespace.List,
@@ -4688,6 +4844,7 @@ exports.ContextMenuSub = ContextMenuSub;
 exports.ContextMenuSubContent = ContextMenuSubContent;
 exports.ContextMenuSubTrigger = ContextMenuSubTrigger;
 exports.ContextMenuTrigger = ContextMenuTrigger;
+exports.CustomTable = CustomTable;
 exports.DatePicker = DatePicker;
 exports.DatePickerInput = DatePickerInput;
 exports.Dialog = Dialog;

@@ -3,7 +3,6 @@
 import * as React from "react"
 import { MoreVertical } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/button"
 import { Checkbox } from "@/components/checkbox"
 import {
@@ -20,7 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
 } from "@/components/dropdown-menu"
 
 export interface ColumnDefinition {
