@@ -4555,6 +4555,10 @@ var CustomTable = React39.forwardRef(
             column.key
           );
         }),
+        showActions && !showSelection && /* @__PURE__ */ jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
+        ] }) }),
         showSelection && /* @__PURE__ */ jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
           /* @__PURE__ */ jsx(
             Checkbox,
@@ -4569,11 +4573,7 @@ var CustomTable = React39.forwardRef(
             /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
             /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
           ] })
-        ] }),
-        showActions && !showSelection && /* @__PURE__ */ jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
-          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
-          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderBulkActions() })
-        ] }) })
+        ] })
       ] }) }),
       /* @__PURE__ */ jsx(TableBody, { children: data.length === 0 ? /* @__PURE__ */ jsx(TableRow, { children: /* @__PURE__ */ jsx(
         TableCell,
@@ -4583,6 +4583,15 @@ var CustomTable = React39.forwardRef(
           children: "No data available"
         }
       ) }) : data.map((row, rowIndex) => /* @__PURE__ */ jsxs(TableRow, { children: [
+        columns.map((column) => {
+          const value = getCellValue(row, column.key);
+          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
+          return /* @__PURE__ */ jsx(TableCell, { children: cellContent }, column.key);
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+        ] }) }),
         showSelection && /* @__PURE__ */ jsxs(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
           /* @__PURE__ */ jsx(
             Checkbox,
@@ -4597,16 +4606,7 @@ var CustomTable = React39.forwardRef(
             /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
             /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
           ] })
-        ] }),
-        columns.map((column) => {
-          const value = getCellValue(row, column.key);
-          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
-          return /* @__PURE__ */ jsx(TableCell, { children: cellContent }, column.key);
-        }),
-        showActions && !showSelection && /* @__PURE__ */ jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxs(DropdownMenu, { children: [
-          /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsx(MoreVertical, { className: "h-4 w-4" }) }) }),
-          /* @__PURE__ */ jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
-        ] }) })
+        ] })
       ] }, rowIndex)) }),
       caption && /* @__PURE__ */ jsx(TableCaption, { children: caption })
     ] });

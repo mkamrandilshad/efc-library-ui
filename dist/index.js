@@ -4606,6 +4606,10 @@ var CustomTable = React39__namespace.forwardRef(
             column.key
           );
         }),
+        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderBulkActions() })
+        ] }) }),
         showSelection && /* @__PURE__ */ jsxRuntime.jsxs(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
           /* @__PURE__ */ jsxRuntime.jsx(
             Checkbox,
@@ -4620,11 +4624,7 @@ var CustomTable = React39__namespace.forwardRef(
             /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
             /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderBulkActions() })
           ] })
-        ] }),
-        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableHead, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: bulkActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
-          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
-          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderBulkActions() })
-        ] }) })
+        ] })
       ] }) }),
       /* @__PURE__ */ jsxRuntime.jsx(TableBody, { children: data.length === 0 ? /* @__PURE__ */ jsxRuntime.jsx(TableRow, { children: /* @__PURE__ */ jsxRuntime.jsx(
         TableCell,
@@ -4634,6 +4634,15 @@ var CustomTable = React39__namespace.forwardRef(
           children: "No data available"
         }
       ) }) : data.map((row, rowIndex) => /* @__PURE__ */ jsxRuntime.jsxs(TableRow, { children: [
+        columns.map((column) => {
+          const value = getCellValue(row, column.key);
+          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
+          return /* @__PURE__ */ jsxRuntime.jsx(TableCell, { children: cellContent }, column.key);
+        }),
+        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
+        ] }) }),
         showSelection && /* @__PURE__ */ jsxRuntime.jsxs(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: [
           /* @__PURE__ */ jsxRuntime.jsx(
             Checkbox,
@@ -4648,16 +4657,7 @@ var CustomTable = React39__namespace.forwardRef(
             /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
             /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
           ] })
-        ] }),
-        columns.map((column) => {
-          const value = getCellValue(row, column.key);
-          const cellContent = column.render ? column.render(value, row, rowIndex) : value;
-          return /* @__PURE__ */ jsxRuntime.jsx(TableCell, { children: cellContent }, column.key);
-        }),
-        showActions && !showSelection && /* @__PURE__ */ jsxRuntime.jsx(TableCell, { className: "flex items-center justify-end mr-2 space-x-2 print:hidden", children: rowActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
-          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx(Button, { variant: "ghost", size: "icon", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
-          /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuContent, { children: renderRowActions(row, rowIndex) })
-        ] }) })
+        ] })
       ] }, rowIndex)) }),
       caption && /* @__PURE__ */ jsxRuntime.jsx(TableCaption, { children: caption })
     ] });

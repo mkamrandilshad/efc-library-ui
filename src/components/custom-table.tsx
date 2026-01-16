@@ -197,16 +197,10 @@ export const CustomTable = React.forwardRef<
                 />
               )
             })}
-            
-            {/* Selection column header */}
-            {showSelection && (
+
+            {/* Actions column header */}
+            {showActions && !showSelection && (
               <TableHead className="flex items-center justify-end mr-2 space-x-2 print:hidden">
-                <Checkbox
-                  checked={isSelectAll || false}
-                  onCheckedChange={(checked) => {
-                    onSelectAll?.(checked === true)
-                  }}
-                />
                 {bulkActions && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -222,9 +216,15 @@ export const CustomTable = React.forwardRef<
               </TableHead>
             )}
 
-            {/* Actions column header */}
-            {showActions && !showSelection && (
+            {/* Selection column header */}
+            {showSelection && (
               <TableHead className="flex items-center justify-end mr-2 space-x-2 print:hidden">
+                <Checkbox
+                  checked={isSelectAll || false}
+                  onCheckedChange={(checked) => {
+                    onSelectAll?.(checked === true)
+                  }}
+                />
                 {bulkActions && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -256,29 +256,6 @@ export const CustomTable = React.forwardRef<
           ) : (
             data.map((row, rowIndex) => (
               <TableRow key={rowIndex}>
-                {/* Selection column cell */}
-                {showSelection && (
-                  <TableCell className="flex items-center justify-end mr-2 space-x-2 print:hidden">
-                    <Checkbox
-                      checked={isRowSelected(selectedRows, rowIndex)}
-                      onCheckedChange={(checked) => {
-                        onRowSelect?.(rowIndex, checked === true)
-                      }}
-                    />
-                    {rowActions && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          {renderRowActions(row, rowIndex)}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </TableCell>
-                )}
 
                 {/* Data cells */}
                 {columns.map((column) => {
@@ -295,6 +272,29 @@ export const CustomTable = React.forwardRef<
                 {/* Actions column cell */}
                 {showActions && !showSelection && (
                   <TableCell className="flex items-center justify-end mr-2 space-x-2 print:hidden">
+                    {rowActions && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          {renderRowActions(row, rowIndex)}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </TableCell>
+                )}
+                {/* Selection column cell */}
+                {showSelection && (
+                  <TableCell className="flex items-center justify-end mr-2 space-x-2 print:hidden">
+                    <Checkbox
+                      checked={isRowSelected(selectedRows, rowIndex)}
+                      onCheckedChange={(checked) => {
+                        onRowSelect?.(rowIndex, checked === true)
+                      }}
+                    />
                     {rowActions && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
