@@ -31,13 +31,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/popover"
 import { Input } from "@/components/input"
 import { Separator } from "@/components/separator"
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/sheet"
-import { ScrollArea } from "@/components/scroll-area"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/dropdown-menu"
 import { Template, MergeField } from "./types"
 
 export interface MenuBarProps {
@@ -389,34 +389,26 @@ export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
         {hasTemplates && templates.length > 0 && (
           <>
             <Separator orientation="vertical" className="h-6" />
-            <Sheet>
-              <SheetTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" size="sm">
                   <FileText className="h-4 w-4 mr-2" />
                   Templates
                 </Button>
-              </SheetTrigger>
-              <SheetContent className="w-[400px] sm:w-[540px]">
-                <SheetHeader>
-                  <SheetTitle>Templates</SheetTitle>
-                </SheetHeader>
-                <ScrollArea className="h-[calc(100vh-100px)] mt-4">
-                  <div className="space-y-2">
-                    {templates.map((template) => (
-                      <Button
-                        key={template.id}
-                        type="button"
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => insertTemplate(template)}
-                      >
-                        {template.name}
-                      </Button>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Templates</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {templates.map((template) => (
+                  <DropdownMenuItem
+                    key={template.id}
+                    onSelect={() => insertTemplate(template)}
+                  >
+                    {template.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         )}
 
@@ -424,41 +416,33 @@ export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
         {hasMergeFields && filteredMergeFields.length > 0 && (
           <>
             <Separator orientation="vertical" className="h-6" />
-            <Sheet>
-              <SheetTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" size="sm">
                   <Mail className="h-4 w-4 mr-2" />
                   Mail Merge
                 </Button>
-              </SheetTrigger>
-              <SheetContent className="w-[400px] sm:w-[540px]">
-                <SheetHeader>
-                  <SheetTitle>Mail Merge Fields</SheetTitle>
-                </SheetHeader>
-                <ScrollArea className="h-[calc(100vh-100px)] mt-4">
-                  <div className="space-y-2">
-                    {filteredMergeFields.map((field) => (
-                      <Button
-                        key={field.id}
-                        type="button"
-                        variant="outline"
-                        className="w-full justify-start"
-                        onClick={() => insertMergeField(field)}
-                      >
-                        <div className="flex flex-col items-start">
-                          <span className="font-medium">{field.label}</span>
-                          {field.category && (
-                            <span className="text-xs text-muted-foreground">
-                              {field.category}
-                            </span>
-                          )}
-                        </div>
-                      </Button>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </SheetContent>
-            </Sheet>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-y-auto">
+                <DropdownMenuLabel>Mail Merge Fields</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {filteredMergeFields.map((field) => (
+                  <DropdownMenuItem
+                    key={field.id}
+                    onSelect={() => insertMergeField(field)}
+                  >
+                    <div className="flex flex-col items-start">
+                      <span className="font-medium">{field.label}</span>
+                      {field.category && (
+                        <span className="text-xs text-muted-foreground">
+                          {field.category}
+                        </span>
+                      )}
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         )}
       </div>

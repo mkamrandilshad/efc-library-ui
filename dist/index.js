@@ -12528,50 +12528,46 @@ var MenuBar = React39__namespace.forwardRef(
           ),
           hasTemplates && templates.length > 0 && /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
             /* @__PURE__ */ jsxRuntime.jsx(Separator, { orientation: "vertical", className: "h-6" }),
-            /* @__PURE__ */ jsxRuntime.jsxs(Sheet, { children: [
-              /* @__PURE__ */ jsxRuntime.jsx(SheetTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+              /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
                 /* @__PURE__ */ jsxRuntime.jsx(lucideReact.FileText, { className: "h-4 w-4 mr-2" }),
                 "Templates"
               ] }) }),
-              /* @__PURE__ */ jsxRuntime.jsxs(SheetContent, { className: "w-[400px] sm:w-[540px]", children: [
-                /* @__PURE__ */ jsxRuntime.jsx(SheetHeader, { children: /* @__PURE__ */ jsxRuntime.jsx(SheetTitle, { children: "Templates" }) }),
-                /* @__PURE__ */ jsxRuntime.jsx(ScrollArea, { className: "h-[calc(100vh-100px)] mt-4", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "space-y-2", children: templates.map((template) => /* @__PURE__ */ jsxRuntime.jsx(
-                  Button,
+              /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenuContent, { align: "start", className: "w-56", children: [
+                /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuLabel, { children: "Templates" }),
+                /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuSeparator, {}),
+                templates.map((template) => /* @__PURE__ */ jsxRuntime.jsx(
+                  DropdownMenuItem,
                   {
-                    type: "button",
-                    variant: "outline",
-                    className: "w-full justify-start",
-                    onClick: () => insertTemplate(template),
+                    onSelect: () => insertTemplate(template),
                     children: template.name
                   },
                   template.id
-                )) }) })
+                ))
               ] })
             ] })
           ] }),
           hasMergeFields && filteredMergeFields.length > 0 && /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
             /* @__PURE__ */ jsxRuntime.jsx(Separator, { orientation: "vertical", className: "h-6" }),
-            /* @__PURE__ */ jsxRuntime.jsxs(Sheet, { children: [
-              /* @__PURE__ */ jsxRuntime.jsx(SheetTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+              /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
                 /* @__PURE__ */ jsxRuntime.jsx(lucideReact.Mail, { className: "h-4 w-4 mr-2" }),
                 "Mail Merge"
               ] }) }),
-              /* @__PURE__ */ jsxRuntime.jsxs(SheetContent, { className: "w-[400px] sm:w-[540px]", children: [
-                /* @__PURE__ */ jsxRuntime.jsx(SheetHeader, { children: /* @__PURE__ */ jsxRuntime.jsx(SheetTitle, { children: "Mail Merge Fields" }) }),
-                /* @__PURE__ */ jsxRuntime.jsx(ScrollArea, { className: "h-[calc(100vh-100px)] mt-4", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "space-y-2", children: filteredMergeFields.map((field) => /* @__PURE__ */ jsxRuntime.jsx(
-                  Button,
+              /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenuContent, { align: "start", className: "w-56 max-h-[300px] overflow-y-auto", children: [
+                /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuLabel, { children: "Mail Merge Fields" }),
+                /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuSeparator, {}),
+                filteredMergeFields.map((field) => /* @__PURE__ */ jsxRuntime.jsx(
+                  DropdownMenuItem,
                   {
-                    type: "button",
-                    variant: "outline",
-                    className: "w-full justify-start",
-                    onClick: () => insertMergeField(field),
+                    onSelect: () => insertMergeField(field),
                     children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-start", children: [
                       /* @__PURE__ */ jsxRuntime.jsx("span", { className: "font-medium", children: field.label }),
                       field.category && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-xs text-muted-foreground", children: field.category })
                     ] })
                   },
                   field.id
-                )) }) })
+                ))
               ] })
             ] })
           ] })

@@ -12474,50 +12474,46 @@ var MenuBar = React39.forwardRef(
           ),
           hasTemplates && templates.length > 0 && /* @__PURE__ */ jsxs(Fragment, { children: [
             /* @__PURE__ */ jsx(Separator, { orientation: "vertical", className: "h-6" }),
-            /* @__PURE__ */ jsxs(Sheet, { children: [
-              /* @__PURE__ */ jsx(SheetTrigger, { asChild: true, children: /* @__PURE__ */ jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
+            /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+              /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
                 /* @__PURE__ */ jsx(FileText, { className: "h-4 w-4 mr-2" }),
                 "Templates"
               ] }) }),
-              /* @__PURE__ */ jsxs(SheetContent, { className: "w-[400px] sm:w-[540px]", children: [
-                /* @__PURE__ */ jsx(SheetHeader, { children: /* @__PURE__ */ jsx(SheetTitle, { children: "Templates" }) }),
-                /* @__PURE__ */ jsx(ScrollArea, { className: "h-[calc(100vh-100px)] mt-4", children: /* @__PURE__ */ jsx("div", { className: "space-y-2", children: templates.map((template) => /* @__PURE__ */ jsx(
-                  Button,
+              /* @__PURE__ */ jsxs(DropdownMenuContent, { align: "start", className: "w-56", children: [
+                /* @__PURE__ */ jsx(DropdownMenuLabel, { children: "Templates" }),
+                /* @__PURE__ */ jsx(DropdownMenuSeparator, {}),
+                templates.map((template) => /* @__PURE__ */ jsx(
+                  DropdownMenuItem,
                   {
-                    type: "button",
-                    variant: "outline",
-                    className: "w-full justify-start",
-                    onClick: () => insertTemplate(template),
+                    onSelect: () => insertTemplate(template),
                     children: template.name
                   },
                   template.id
-                )) }) })
+                ))
               ] })
             ] })
           ] }),
           hasMergeFields && filteredMergeFields.length > 0 && /* @__PURE__ */ jsxs(Fragment, { children: [
             /* @__PURE__ */ jsx(Separator, { orientation: "vertical", className: "h-6" }),
-            /* @__PURE__ */ jsxs(Sheet, { children: [
-              /* @__PURE__ */ jsx(SheetTrigger, { asChild: true, children: /* @__PURE__ */ jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
+            /* @__PURE__ */ jsxs(DropdownMenu, { children: [
+              /* @__PURE__ */ jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxs(Button, { type: "button", variant: "outline", size: "sm", children: [
                 /* @__PURE__ */ jsx(Mail, { className: "h-4 w-4 mr-2" }),
                 "Mail Merge"
               ] }) }),
-              /* @__PURE__ */ jsxs(SheetContent, { className: "w-[400px] sm:w-[540px]", children: [
-                /* @__PURE__ */ jsx(SheetHeader, { children: /* @__PURE__ */ jsx(SheetTitle, { children: "Mail Merge Fields" }) }),
-                /* @__PURE__ */ jsx(ScrollArea, { className: "h-[calc(100vh-100px)] mt-4", children: /* @__PURE__ */ jsx("div", { className: "space-y-2", children: filteredMergeFields.map((field) => /* @__PURE__ */ jsx(
-                  Button,
+              /* @__PURE__ */ jsxs(DropdownMenuContent, { align: "start", className: "w-56 max-h-[300px] overflow-y-auto", children: [
+                /* @__PURE__ */ jsx(DropdownMenuLabel, { children: "Mail Merge Fields" }),
+                /* @__PURE__ */ jsx(DropdownMenuSeparator, {}),
+                filteredMergeFields.map((field) => /* @__PURE__ */ jsx(
+                  DropdownMenuItem,
                   {
-                    type: "button",
-                    variant: "outline",
-                    className: "w-full justify-start",
-                    onClick: () => insertMergeField(field),
+                    onSelect: () => insertMergeField(field),
                     children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col items-start", children: [
                       /* @__PURE__ */ jsx("span", { className: "font-medium", children: field.label }),
                       field.category && /* @__PURE__ */ jsx("span", { className: "text-xs text-muted-foreground", children: field.category })
                     ] })
                   },
                   field.id
-                )) }) })
+                ))
               ] })
             ] })
           ] })
