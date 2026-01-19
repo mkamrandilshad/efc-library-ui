@@ -500,3 +500,12 @@ export {
   TooltipContent,
   TooltipProvider,
 } from "./components/tooltip";
+
+// Rich Text Editor
+export {
+  RichTextEditor,
+  type RichTextEditorProps,
+  type Template,
+  type MergeField,
+  type FileAttachment,
+} from "./components/rich-text-editor";
