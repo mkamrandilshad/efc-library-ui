@@ -4645,43 +4645,66 @@ var CustomTable = React39.forwardRef(
   }
 );
 CustomTable.displayName = "CustomTable";
-var Tabs = TabsPrimitive.Root;
-var TabsList = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  TabsPrimitive.List,
-  {
-    ref,
-    className: cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
+var Tabs = React39.forwardRef(({ tabs, activeTab, onTabChange, showMobileNav = false, className, ...props }, ref) => {
+  const [value, setValue] = React39.useState(activeTab || tabs[0]?.id);
+  React39.useEffect(() => {
+    if (activeTab !== void 0) setValue(activeTab);
+  }, [activeTab]);
+  const handleValueChange = (newValue) => {
+    setValue(newValue);
+    onTabChange?.(newValue);
+  };
+  return /* @__PURE__ */ jsxs("div", { className: cn("print:hidden", className), children: [
+    /* @__PURE__ */ jsx(
+      TabsPrimitive.Root,
+      {
+        ref,
+        value,
+        onValueChange: handleValueChange,
+        ...props,
+        children: /* @__PURE__ */ jsx(TabsPrimitive.List, { className: "border-b-[1.5px] border-b-zinc-300 bg-card rounded rounded-b-none pl-2 min-w-full justify-start max-lg:hidden", children: tabs.map((tab) => /* @__PURE__ */ jsx(
+          TabsPrimitive.Trigger,
+          {
+            value: tab.id,
+            className: cn(
+              "p-2 pt-3 pb-3 focus:outline-none font-semibold border-b-[4px] transition",
+              value === tab.id ? "text-foreground border-b-primary" : "text-muted-foreground border-transparent hover:border-b-primary dark:hover:border-b-blue-600"
+            ),
+            children: tab.renderLabel || tab.label
+          },
+          tab.id
+        )) })
+      }
     ),
-    ...props
-  }
-));
-TabsList.displayName = TabsPrimitive.List.displayName;
-var TabsTrigger = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  TabsPrimitive.Trigger,
-  {
-    ref,
-    className: cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-      className
-    ),
-    ...props
-  }
-));
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-var TabsContent = React39.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsx(
-  TabsPrimitive.Content,
-  {
-    ref,
-    className: cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      className
-    ),
-    ...props
-  }
-));
-TabsContent.displayName = TabsPrimitive.Content.displayName;
+    showMobileNav && /* @__PURE__ */ jsx("div", { className: "lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t-2 border-primary", children: /* @__PURE__ */ jsx("div", { className: "flex justify-around items-center h-10 px-4", children: tabs.map((tab) => {
+      const isActive = value === tab.id;
+      return /* @__PURE__ */ jsx(
+        "button",
+        {
+          onClick: () => handleValueChange(tab.id),
+          className: cn(
+            "h-9 border-b-2 transition",
+            isActive ? "border-primary dark:border-blue-600" : "border-transparent"
+          ),
+          children: tab.icon && /* @__PURE__ */ jsx(
+            tab.icon,
+            {
+              size: 20,
+              className: cn(
+                isActive ? "text-primary dark:text-blue-400" : "text-muted-foreground"
+              )
+            }
+          )
+        },
+        tab.id
+      );
+    }) }) })
+  ] });
+});
+Tabs.displayName = "Tabs";
+var TabsList = TabsPrimitive.List;
+var TabsTrigger = TabsPrimitive.Trigger;
+var TabsContent = TabsPrimitive.Content;
 var toggleVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 gap-2",
   {

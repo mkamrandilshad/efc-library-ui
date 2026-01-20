@@ -42,6 +42,7 @@ import * as SliderPrimitive from '@radix-ui/react-slider';
 import { Toaster as Toaster$1 } from 'sonner';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
+import { LucideIcon } from 'lucide-react';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 
@@ -971,10 +972,23 @@ interface CustomTableProps {
 }
 declare const CustomTable: React$1.ForwardRefExoticComponent<CustomTableProps & React$1.RefAttributes<HTMLTableElement>>;
 
-declare const Tabs: React$1.ForwardRefExoticComponent<TabsPrimitive.TabsProps & React$1.RefAttributes<HTMLDivElement>>;
-declare const TabsList: React$1.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsListProps & React$1.RefAttributes<HTMLDivElement>, "ref"> & React$1.RefAttributes<HTMLDivElement>>;
-declare const TabsTrigger: React$1.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsTriggerProps & React$1.RefAttributes<HTMLButtonElement>, "ref"> & React$1.RefAttributes<HTMLButtonElement>>;
-declare const TabsContent: React$1.ForwardRefExoticComponent<Omit<TabsPrimitive.TabsContentProps & React$1.RefAttributes<HTMLDivElement>, "ref"> & React$1.RefAttributes<HTMLDivElement>>;
+interface Tab {
+    id: string;
+    label?: string;
+    icon?: LucideIcon;
+    renderLabel?: React$1.ReactNode;
+}
+interface TabsProps extends React$1.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
+    tabs: Tab[];
+    activeTab?: string;
+    onTabChange?: (tabId: string) => void;
+    showMobileNav?: boolean;
+    className?: string;
+}
+declare const Tabs: React$1.ForwardRefExoticComponent<TabsProps & React$1.RefAttributes<HTMLDivElement>>;
+declare const TabsList: React$1.ForwardRefExoticComponent<TabsPrimitive.TabsListProps & React$1.RefAttributes<HTMLDivElement>>;
+declare const TabsTrigger: React$1.ForwardRefExoticComponent<TabsPrimitive.TabsTriggerProps & React$1.RefAttributes<HTMLButtonElement>>;
+declare const TabsContent: React$1.ForwardRefExoticComponent<TabsPrimitive.TabsContentProps & React$1.RefAttributes<HTMLDivElement>>;
 
 declare const Textarea: React$1.ForwardRefExoticComponent<Omit<React$1.DetailedHTMLProps<React$1.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>, "ref"> & React$1.RefAttributes<HTMLTextAreaElement>>;
 
