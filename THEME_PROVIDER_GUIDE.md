@@ -23,8 +23,9 @@ ThemeProvider is a React component that lets you set custom colors for your enti
    - And many more...
 
 ### 3. **Support Light and Dark Modes**
-   - Provide different color schemes for light mode and dark mode
-   - ThemeProvider automatically switches colors when dark mode is activated
+   - Handle dark/light mode switching in your application
+   - Pass the appropriate theme based on the current mode
+   - ThemeProvider will apply whichever theme you pass
 
 ### 4. **Apply to Specific Sections (Optional)**
    - Apply theme to the entire app (default)
@@ -43,8 +44,8 @@ function App() {
   return (
     <ThemeProvider
       theme={{
-        primary: '222.2 47.4% 11.2%',  // Your primary color
-        'primary-foreground': '210 40% 98%',  // Text color on primary
+        primary: '#1a1a1a',  // Your primary color (hex format)
+        'primary-foreground': '#f5f5f5',  // Text color on primary
         // Add more colors as needed
       }}
     >
@@ -57,27 +58,31 @@ function App() {
 
 ### With Dark Mode Support
 
+ThemeProvider accepts a single `theme` prop. To support dark/light mode, handle the mode switching in your application and pass the appropriate theme:
+
 ```tsx
 import { ThemeProvider } from 'efc-ui-library';
+import { useTheme } from 'next-themes'; // or your theme hook
 
 function App() {
+  const { theme: mode } = useTheme(); // 'light' or 'dark'
+  
+  const lightTheme = {
+    primary: '#1a1a1a',
+    'primary-foreground': '#f5f5f5',
+    background: '#ffffff',
+    foreground: '#0a0a0a',
+  };
+  
+  const darkTheme = {
+    primary: '#f5f5f5',
+    'primary-foreground': '#1a1a1a',
+    background: '#0a0a0a',
+    foreground: '#f5f5f5',
+  };
+  
   return (
-    <ThemeProvider
-      theme={{
-        // Light mode colors
-        primary: '222.2 47.4% 11.2%',
-        'primary-foreground': '210 40% 98%',
-        background: '0 0% 100%',
-        foreground: '222.2 84% 4.9%',
-      }}
-      darkTheme={{
-        // Dark mode colors
-        primary: '210 40% 98%',
-        'primary-foreground': '222.2 47.4% 11.2%',
-        background: '222.2 84% 4.9%',
-        foreground: '210 40% 98%',
-      }}
-    >
+    <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
       <YourApp />
     </ThemeProvider>
   );
@@ -94,41 +99,41 @@ function App() {
     <ThemeProvider
       theme={{
         // Base colors
-        background: '0 0% 100%',
-        foreground: '222.2 84% 4.9%',
+        background: '#ffffff',
+        foreground: '#0a0a0a',
         
         // Primary brand colors
-        primary: '222.2 47.4% 11.2%',
-        'primary-foreground': '210 40% 98%',
+        primary: '#1a1a1a',
+        'primary-foreground': '#f5f5f5',
         
         // Secondary colors
-        secondary: '210 40% 96.1%',
-        'secondary-foreground': '222.2 47.4% 11.2%',
+        secondary: '#f0f0f0',
+        'secondary-foreground': '#1a1a1a',
         
         // Accent colors
-        accent: '210 40% 96.1%',
-        'accent-foreground': '222.2 47.4% 11.2%',
+        accent: '#f0f0f0',
+        'accent-foreground': '#1a1a1a',
         
         // Muted colors
-        muted: '210 40% 96.1%',
-        'muted-foreground': '215.4 16.3% 46.9%',
+        muted: '#f0f0f0',
+        'muted-foreground': '#737373',
         
         // Destructive/error colors
-        destructive: '0 84.2% 60.2%',
-        'destructive-foreground': '210 40% 98%',
+        destructive: '#ef4444',
+        'destructive-foreground': '#f5f5f5',
         
         // Border and input colors
-        border: '214.3 31.8% 91.4%',
-        input: '214.3 31.8% 91.4%',
-        ring: '222.2 84% 4.9%',
+        border: '#e5e5e5',
+        input: '#e5e5e5',
+        ring: '#0a0a0a',
         
         // Card colors
-        card: '0 0% 100%',
-        'card-foreground': '222.2 84% 4.9%',
+        card: '#ffffff',
+        'card-foreground': '#0a0a0a',
         
         // Popover colors
-        popover: '0 0% 100%',
-        'popover-foreground': '222.2 84% 4.9%',
+        popover: '#ffffff',
+        'popover-foreground': '#0a0a0a',
         
         // Border radius
         radius: '0.5rem',
@@ -144,26 +149,26 @@ function App() {
 
 ## Color Format
 
-**Important**: Colors must be provided in **HSL format without the `hsl()` wrapper**.
+**Important**: Colors should be provided in **hex format** (e.g., `'#1a1a1a'`).
 
-- ✅ **Correct**: `'222.2 47.4% 11.2%'`
-- ❌ **Wrong**: `'hsl(222.2, 47.4%, 11.2%)'`
-- ❌ **Wrong**: `'#1a1a1a'`
+- ✅ **Correct**: `'#1a1a1a'` (hex format - recommended)
+- ✅ **Also Accepted**: `'222.2 47.4% 11.2%'` (HSL format - will work but hex is preferred)
+- ❌ **Wrong**: `'hsl(222.2, 47.4%, 11.2%)'` (with hsl() wrapper)
 
-### How to Convert Your Colors to HSL Format
+### Supported Hex Formats
 
-If you have a hex color like `#1a1a1a`, you can convert it:
+You can use any of these hex formats:
+- `'#1a1a1a'` - Standard 6-digit hex
+- `'#1a1'` - Short 3-digit hex (will be expanded to `#11aa11`)
+- `'#1a1a1aff'` - 8-digit hex with alpha (alpha channel is ignored)
 
-1. **Online Tool**: Use a color converter like [HSL Color Picker](https://hslpicker.com/)
-2. **CSS**: Use browser DevTools to inspect any element and see its HSL value
-3. **JavaScript**: 
-   ```javascript
-   // Convert hex to HSL
-   function hexToHsl(hex) {
-     // ... conversion logic
-     return `${h} ${s}% ${l}%`;
-   }
-   ```
+### Why Hex Format?
+
+Hex colors are:
+- ✅ More familiar and commonly used
+- ✅ Easy to copy from design tools (Figma, Sketch, etc.)
+- ✅ Automatically converted to HSL internally
+- ✅ No conversion needed on your end
 
 ---
 
@@ -205,7 +210,7 @@ You can customize any of these color properties:
 ✅ **Centralized Theming**: Change all component colors from one place  
 ✅ **Type-Safe**: Full TypeScript support with autocomplete  
 ✅ **Flexible**: Only override the colors you need  
-✅ **Dark Mode Ready**: Built-in support for light/dark themes  
+✅ **Dark Mode Ready**: Easy to integrate with your dark/light mode system  
 ✅ **No CSS Changes**: No need to modify CSS files or component styles  
 ✅ **Automatic Updates**: All components automatically use your theme colors  
 

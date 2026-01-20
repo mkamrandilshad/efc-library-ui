@@ -2,6 +2,80 @@ import * as React from "react";
 import type { ThemeProviderProps, ThemeColors } from "@/lib/theme";
 
 /**
+ * Converts hex color to HSL format (without hsl() wrapper)
+ * Accepts formats: #rgb, #rrggbb, #rrggbbaa
+ */
+function hexToHsl(hex: string): string {
+  // Remove # if present
+  hex = hex.replace("#", "");
+
+  // Handle 3-digit hex
+  if (hex.length === 3) {
+    hex = hex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  // Parse RGB values
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+  // Find min and max
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+
+  // Convert to percentages and round
+  h = Math.round(h * 360 * 10) / 10;
+  s = Math.round(s * 100 * 10) / 10;
+  const lPercent = Math.round(l * 100 * 10) / 10;
+
+  return `${h} ${s}% ${lPercent}%`;
+}
+
+/**
+ * Converts a color value to HSL format if needed
+ * Accepts hex (#1a1a1a) or HSL (222.2 47.4% 11.2%) format
+ */
+function normalizeColor(color: string | undefined): string {
+  if (!color) return "";
+  
+  // If it's already HSL format (contains %), return as is
+  if (color.includes("%")) {
+    return color;
+  }
+
+  // If it's a hex color, convert it
+  if (color.startsWith("#")) {
+    return hexToHsl(color);
+  }
+
+  // If it's radius or other non-color value, return as is
+  return color;
+}
+
+/**
  * Applies CSS variables to the specified scope element
  */
 function applyTheme(
@@ -23,10 +97,13 @@ function applyTheme(
 
   // Apply each theme color as a CSS variable
   Object.entries(theme).forEach(([key, value]) => {
-    if (value !== undefined) {
+    if (value !== undefined && typeof value === "string") {
       const cssVariableName = `--${key}`;
       if (targetElement instanceof HTMLElement) {
-        targetElement.style.setProperty(cssVariableName, value);
+        // Convert hex to HSL if needed (except for radius which is not a color)
+        const normalizedValue =
+          key === "radius" ? value : normalizeColor(value);
+        targetElement.style.setProperty(cssVariableName, normalizedValue);
       }
     }
   });
@@ -63,12 +140,8 @@ function removeTheme(
  * ```tsx
  * <ThemeProvider
  *   theme={{
- *     primary: '222.2 47.4% 11.2%',
- *     'primary-foreground': '210 40% 98%',
- *   }}
- *   darkTheme={{
- *     primary: '210 40% 98%',
- *     'primary-foreground': '222.2 47.4% 11.2%',
+ *     primary: '#1a1a1a',
+ *     'primary-foreground': '#f5f5f5',
  *   }}
  * >
  *   <App />
@@ -77,11 +150,10 @@ function removeTheme(
  */
 export function ThemeProvider({
   theme,
-  darkTheme,
   scope,
   children,
 }: ThemeProviderProps) {
-  // Apply light theme to :root (always applied)
+  // Apply theme to :root
   React.useEffect(() => {
     if (typeof document === "undefined") return;
     applyTheme(theme, scope);
@@ -90,40 +162,6 @@ export function ThemeProvider({
       removeTheme(theme, scope);
     };
   }, [theme, scope]);
-
-  // Apply dark theme when dark mode is active (overrides light theme)
-  React.useEffect(() => {
-    if (!darkTheme || typeof document === "undefined") return;
-
-    const updateTheme = () => {
-      const isDark =
-        document.documentElement.classList.contains("dark") ||
-        document.documentElement.getAttribute("data-theme") === "dark";
-
-      if (isDark) {
-        // Apply dark theme variables (will override light theme)
-        applyTheme(darkTheme, scope);
-      } else {
-        // Remove dark theme variables (light theme will show through)
-        removeTheme(darkTheme, scope);
-      }
-    };
-
-    // Check initial state
-    updateTheme();
-
-    // Watch for dark mode changes
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme"],
-    });
-
-    return () => {
-      observer.disconnect();
-      removeTheme(darkTheme, scope);
-    };
-  }, [darkTheme, scope]);
 
   return <>{children}</>;
 }
