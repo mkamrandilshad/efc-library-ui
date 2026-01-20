@@ -42,7 +42,7 @@ import * as SliderPrimitive from '@radix-ui/react-slider';
 import { Toaster as Toaster$1 } from 'sonner';
 import * as SwitchPrimitives from '@radix-ui/react-switch';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
-import { LucideIcon } from 'lucide-react';
+import { LucideProps } from 'lucide-react';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 
@@ -975,7 +975,7 @@ declare const CustomTable: React$1.ForwardRefExoticComponent<CustomTableProps & 
 interface Tab {
     id: string;
     label?: string;
-    icon?: LucideIcon;
+    icon?: React$1.ComponentType<LucideProps>;
     renderLabel?: React$1.ReactNode;
 }
 interface TabsProps extends React$1.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
