@@ -84,9 +84,7 @@
   }
 }
 
-/* Rich Text Editor List Styles */
 @layer base {
-  /* Rich Text Editor Image Resize Styles */
   .resizable-image-wrapper {
     @apply relative inline-block;
     display: inline-block;

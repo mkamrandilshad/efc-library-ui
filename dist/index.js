@@ -12992,7 +12992,7 @@ var RichTextEditor = React39__namespace.forwardRef(
     const [files, setFiles] = React39__namespace.useState([]);
     React39__namespace.useEffect(() => {
       onFileChange?.(files);
-    }, [files, onFileChange]);
+    }, [files]);
     const handleFileUpload = async (file) => {
       if (onFileUpload) {
         const result = await onFileUpload(file);

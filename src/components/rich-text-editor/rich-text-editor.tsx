@@ -30,7 +30,7 @@ export const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorPro
 
     React.useEffect(() => {
       onFileChange?.(files)
-    }, [files, onFileChange])
+    }, [files])
 
     const handleFileUpload = async (file: File) => {
       if (onFileUpload) {

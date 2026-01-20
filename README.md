@@ -236,6 +236,239 @@ function App() {
 }
 ```
 
+### Table
+
+#### Basic Table
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableCaption,
+} from "efc-ui-library";
+
+function App() {
+  return (
+    <Table>
+      <TableCaption>A list of recent invoices.</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Invoice</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Method</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">INV001</TableCell>
+          <TableCell>Paid</TableCell>
+          <TableCell>Credit Card</TableCell>
+          <TableCell className="text-right">$250.00</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">INV002</TableCell>
+          <TableCell>Pending</TableCell>
+          <TableCell>PayPal</TableCell>
+          <TableCell className="text-right">$150.00</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+#### Custom Table with Selection and Actions
+
+```tsx
+import { useState } from "react";
+import {
+  CustomTable,
+  Button,
+  DropdownMenuItem,
+} from "efc-ui-library";
+import type { ColumnDefinition } from "efc-ui-library";
+
+function App() {
+  const [selectedRows, setSelectedRows] = useState<boolean[]>([]);
+  const [isSelectAll, setIsSelectAll] = useState(false);
+
+  const data = [
+    { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
+    { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "User" },
+  ];
+
+  const columns: ColumnDefinition[] = [
+    {
+      key: "name",
+      label: "Name",
+      onSort: () => console.log("Sort by name"),
+    },
+    {
+      key: "email",
+      label: "Email",
+      hideOnMobile: true,
+    },
+    {
+      key: "role",
+      label: "Role",
+      type: "dropdown",
+      filters: [
+        { label: "All", value: "all" },
+        { label: "Admin", value: "admin" },
+        { label: "User", value: "user" },
+      ],
+      currentFilterIndex: 0,
+      onFilterChange: (filter) => console.log("Filter:", filter),
+    },
+  ];
+
+  const handleRowSelect = (index: number, selected: boolean) => {
+    const newSelection = [...selectedRows];
+    newSelection[index] = selected;
+    setSelectedRows(newSelection);
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    setIsSelectAll(selected);
+    setSelectedRows(data.map(() => selected));
+  };
+
+  const bulkActions = (selectedCount: number) => (
+    <>
+      <DropdownMenuItem>Delete ({selectedCount})</DropdownMenuItem>
+      <DropdownMenuItem>Export ({selectedCount})</DropdownMenuItem>
+    </>
+  );
+
+  const rowActions = (row: any) => (
+    <>
+      <DropdownMenuItem>Edit</DropdownMenuItem>
+      <DropdownMenuItem>Delete</DropdownMenuItem>
+    </>
+  );
+
+  return (
+    <CustomTable
+      columns={columns}
+      data={data}
+      selectedRows={selectedRows}
+      onRowSelect={handleRowSelect}
+      isSelectAll={isSelectAll}
+      onSelectAll={handleSelectAll}
+      bulkActions={bulkActions}
+      rowActions={rowActions}
+      showSelection={true}
+      showActions={true}
+      caption="User Management"
+    />
+  );
+}
+```
+
+### Rich Text Editor
+
+#### Basic Rich Text Editor
+
+```tsx
+import { RichTextEditor } from "efc-ui-library";
+
+function App() {
+  const handleContentChange = (html: string) => {
+    console.log("Content changed:", html);
+  };
+
+  return (
+    <RichTextEditor
+      onContentChange={handleContentChange}
+      defaultContent="<p>Start typing...</p>"
+    />
+  );
+}
+```
+
+#### Rich Text Editor with File Upload
+
+```tsx
+import { RichTextEditor } from "efc-ui-library";
+import type { FileAttachment } from "efc-ui-library";
+
+function App() {
+  const handleFileUpload = async (file: File): Promise<FileAttachment> => {
+    // Upload file to your server
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+    
+    const result = await response.json();
+    return {
+      id: result.id,
+      filename: file.name,
+    };
+  };
+
+  const handleFileChange = (files: FileAttachment[]) => {
+    console.log("Files attached:", files);
+  };
+
+  return (
+    <RichTextEditor
+      onFileUpload={handleFileUpload}
+      onFileChange={handleFileChange}
+      onContentChange={(html) => console.log("Content:", html)}
+    />
+  );
+}
+```
+
+#### Rich Text Editor with Merge Fields and Templates
+
+```tsx
+import { RichTextEditor } from "efc-ui-library";
+import type { MergeField, Template } from "efc-ui-library";
+
+function App() {
+  const mergeFields: MergeField[] = [
+    { id: "1", label: "First Name", value: "{{firstName}}", category: "User" },
+    { id: "2", label: "Last Name", value: "{{lastName}}", category: "User" },
+    { id: "3", label: "Email", value: "{{email}}", category: "Contact" },
+  ];
+
+  const templates: Template[] = [
+    {
+      id: "1",
+      name: "Welcome Email",
+      content: "<p>Hello {{firstName}}, welcome to our platform!</p>",
+    },
+    {
+      id: "2",
+      name: "Password Reset",
+      content: "<p>Click here to reset your password: {{resetLink}}</p>",
+    },
+  ];
+
+  return (
+    <RichTextEditor
+      hasMergeFields={true}
+      hasTemplates={true}
+      mergeFields={mergeFields}
+      templates={templates}
+      mergeFieldFilter={(field) => field.category === "User"}
+      onContentChange={(html) => console.log("Content:", html)}
+    />
+  );
+}
+```
+
 ## Development
 
 ### Build

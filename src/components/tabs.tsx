@@ -1,53 +1,105 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
-
 import { cn } from "@/lib/utils"
+import { LucideIcon } from "lucide-react"
 
-const Tabs = TabsPrimitive.Root
+export interface Tab {
+  id: string
+  label?: string
+  icon?: LucideIcon
+  renderLabel?: React.ReactNode
+}
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
-    )}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
+  tabs: Tab[]
+  activeTab?: string
+  onTabChange?: (tabId: string) => void
+  showMobileNav?: boolean
+  className?: string
+}
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+const Tabs = React.forwardRef<
+  React.ElementRef<typeof TabsPrimitive.Root>,
+  TabsProps
+>(({ tabs, activeTab, onTabChange, showMobileNav = false, className, ...props }, ref) => {
+  const [value, setValue] = React.useState(activeTab || tabs[0]?.id)
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      className
-    )}
-    {...props}
-  />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+  React.useEffect(() => {
+    if (activeTab !== undefined) setValue(activeTab)
+  }, [activeTab])
+
+  const handleValueChange = (newValue: string) => {
+    setValue(newValue)
+    onTabChange?.(newValue)
+  }
+
+  return (
+    <div className={cn("print:hidden", className)}>
+      {/* Desktop Tabs */}
+      <TabsPrimitive.Root
+        ref={ref}
+        value={value}
+        onValueChange={handleValueChange}
+        {...props}
+      >
+        <TabsPrimitive.List className="border-b-[1.5px] border-b-zinc-300 bg-card rounded rounded-b-none pl-2 min-w-full justify-start max-lg:hidden">
+          {tabs.map((tab) => (
+            <TabsPrimitive.Trigger
+              key={tab.id}
+              value={tab.id}
+              className={cn(
+                "p-2 pt-3 pb-3 focus:outline-none font-semibold border-b-[4px] transition",
+                value === tab.id
+                  ? "text-foreground border-b-primary"
+                  : "text-muted-foreground border-transparent hover:border-b-primary dark:hover:border-b-blue-600"
+              )}
+            >
+              {tab.renderLabel || tab.label}
+            </TabsPrimitive.Trigger>
+          ))}
+        </TabsPrimitive.List>
+      </TabsPrimitive.Root>
+
+      {/* Mobile Navigation */}
+      {showMobileNav && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t-2 border-primary">
+          <div className="flex justify-around items-center h-10 px-4">
+            {tabs.map((tab) => {
+              const isActive = value === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleValueChange(tab.id)}
+                  className={cn(
+                    "h-9 border-b-2 transition",
+                    isActive
+                      ? "border-primary dark:border-blue-600"
+                      : "border-transparent"
+                  )}
+                >
+                  {tab.icon && (
+                    <tab.icon
+                      size={20}
+                      className={cn(
+                        isActive
+                          ? "text-primary dark:text-blue-400"
+                          : "text-muted-foreground"
+                      )}
+                    />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+})
+Tabs.displayName = "Tabs"
+
+const TabsList = TabsPrimitive.List
+const TabsTrigger = TabsPrimitive.Trigger
+const TabsContent = TabsPrimitive.Content
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }
