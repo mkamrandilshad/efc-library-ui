@@ -86,39 +86,6 @@
 
 /* Rich Text Editor List Styles */
 @layer base {
-  .ProseMirror ul,
-  .ProseMirror ol {
-    @apply my-4 ml-6;
-  }
-
-  .ProseMirror ul {
-    @apply list-disc;
-  }
-
-  .ProseMirror ol {
-    @apply list-decimal;
-  }
-
-  .ProseMirror li {
-    @apply my-1;
-  }
-
-  .ProseMirror ul[data-type="taskList"] {
-    @apply list-none ml-0;
-  }
-
-  .ProseMirror ul[data-type="taskList"] li {
-    @apply flex items-start;
-  }
-
-  .ProseMirror ul[data-type="taskList"] li > label {
-    @apply flex-1;
-  }
-
-  .ProseMirror ul[data-type="taskList"] li > div {
-    @apply flex-1;
-  }
-
   /* Rich Text Editor Image Resize Styles */
   .resizable-image-wrapper {
     @apply relative inline-block;

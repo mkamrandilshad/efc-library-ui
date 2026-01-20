@@ -231,7 +231,6 @@ export const ResizableImage = ({ node, updateAttributes, selected, getPos }: Res
         }}
         draggable={false}
       />
-      {(isSelected || selected) && (
         <>
           {/* Selection Border */}
           <div style={selectionBorderStyle} />
@@ -288,7 +287,6 @@ export const ResizableImage = ({ node, updateAttributes, selected, getPos }: Res
             onMouseLeave={() => setHoveredHandle(null)}
           />
         </>
-      )}
     </NodeViewWrapper>
   )
 }

@@ -12264,7 +12264,7 @@ var ResizableImage = ({ node, updateAttributes: updateAttributes2, selected, get
             draggable: false
           }
         ),
-        (isSelected || selected) && /* @__PURE__ */ jsxs(Fragment, { children: [
+        /* @__PURE__ */ jsxs(Fragment, { children: [
           /* @__PURE__ */ jsx("div", { style: selectionBorderStyle }),
           /* @__PURE__ */ jsx(
             "div",
@@ -12469,9 +12469,21 @@ var extensions = [
   StarterKit.configure({
     blockquote: false,
     // We'll use the Blockquote extension instead
-    bulletList: true,
-    orderedList: true,
-    listItem: true,
+    bulletList: {
+      HTMLAttributes: {
+        class: "list-disc ml-6 my-4"
+      }
+    },
+    orderedList: {
+      HTMLAttributes: {
+        class: "list-decimal ml-6 my-4"
+      }
+    },
+    listItem: {
+      HTMLAttributes: {
+        class: "my-1"
+      }
+    },
     heading: {
       levels: [1, 2, 3]
     },
