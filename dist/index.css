@@ -408,6 +408,79 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }
+.resizable-image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.resizable-image-wrapper.selected .resize-outline {
+  pointer-events: none;
+  position: absolute;
+  inset: 0px;
+  border: 2px dashed #3b82f6;
+  border-radius: 2px;
+}
+.resizable-image-wrapper .resize-handle {
+  position: absolute;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: calc(var(--radius) - 4px);
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1));
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 10;
+}
+.resizable-image-wrapper .resize-handle-nw {
+  top: 0px;
+  left: 0px;
+  cursor: nwse-resize;
+}
+.resizable-image-wrapper .resize-handle-n {
+  top: 0px;
+  left: 50%;
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  cursor: ns-resize;
+}
+.resizable-image-wrapper .resize-handle-ne {
+  top: 0px;
+  right: 0px;
+  cursor: nesw-resize;
+}
+.resizable-image-wrapper .resize-handle-e {
+  top: 50%;
+  right: 0px;
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  cursor: ew-resize;
+}
+.resizable-image-wrapper .resize-handle-se {
+  bottom: 0px;
+  right: 0px;
+  cursor: nwse-resize;
+}
+.resizable-image-wrapper .resize-handle-s {
+  bottom: 0px;
+  left: 50%;
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  cursor: ns-resize;
+}
+.resizable-image-wrapper .resize-handle-sw {
+  bottom: 0px;
+  left: 0px;
+  cursor: nesw-resize;
+}
+.resizable-image-wrapper .resize-handle-w {
+  top: 50%;
+  left: 0px;
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  cursor: ew-resize;
+}
 .sr-only {
   position: absolute;
   width: 1px;

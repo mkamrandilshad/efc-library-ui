@@ -68,7 +68,7 @@ export const RichTextEditor = React.forwardRef<HTMLDivElement, RichTextEditorPro
               />
             )
           }
-          slotAfter={<SelectedFiles files={files} onDeleteFile={handleDeleteFile} />}
+          slotAfter={files.length > 0 ? <SelectedFiles files={files} onDeleteFile={handleDeleteFile} /> : undefined}
           extensions={extensions}
           editorProps={{
             attributes: {

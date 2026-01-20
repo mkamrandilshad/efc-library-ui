@@ -42,7 +42,7 @@ import * as SwitchPrimitives from '@radix-ui/react-switch';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { useCurrentEditor, EditorProvider } from '@tiptap/react';
+import { ReactRenderer, useCurrentEditor, EditorProvider, NodeViewWrapper } from '@tiptap/react';
 import { Color } from '@tiptap/extension-color';
 import { Image } from '@tiptap/extension-image';
 import { Link } from '@tiptap/extension-link';
@@ -12074,6 +12074,96 @@ Extension.create({
     ];
   }
 });
+var ResizableImage = ({ node, updateAttributes: updateAttributes2, selected }) => {
+  const [isResizing, setIsResizing] = React39.useState(false);
+  const [resizeHandle, setResizeHandle] = React39.useState(null);
+  const imgRef = React39.useRef(null);
+  const startPosRef = React39.useRef({ x: 0, y: 0, width: 0, height: 0 });
+  const handleMouseDown = (e, handle) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizeHandle(handle);
+    if (imgRef.current) {
+      const rect = imgRef.current.getBoundingClientRect();
+      startPosRef.current = {
+        x: e.clientX,
+        y: e.clientY,
+        width: rect.width,
+        height: rect.height
+      };
+    }
+  };
+  React39.useEffect(() => {
+    if (!isResizing) return;
+    const handleMouseMove = (e) => {
+      if (!imgRef.current || !resizeHandle) return;
+      const deltaX = e.clientX - startPosRef.current.x;
+      const deltaY = e.clientY - startPosRef.current.y;
+      let newWidth = startPosRef.current.width;
+      let newHeight = startPosRef.current.height;
+      if (resizeHandle.includes("e")) newWidth = startPosRef.current.width + deltaX;
+      if (resizeHandle.includes("w")) newWidth = startPosRef.current.width - deltaX;
+      if (resizeHandle.includes("s")) newHeight = startPosRef.current.height + deltaY;
+      if (resizeHandle.includes("n")) newHeight = startPosRef.current.height - deltaY;
+      if (resizeHandle.length === 2) {
+        const aspectRatio = startPosRef.current.width / startPosRef.current.height;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          newHeight = newWidth / aspectRatio;
+        } else {
+          newWidth = newHeight * aspectRatio;
+        }
+      }
+      newWidth = Math.max(50, newWidth);
+      newHeight = Math.max(50, newHeight);
+      updateAttributes2({
+        width: Math.round(newWidth),
+        height: Math.round(newHeight)
+      });
+    };
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      setResizeHandle(null);
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, resizeHandle, updateAttributes2]);
+  const handles = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
+  return /* @__PURE__ */ jsxs(NodeViewWrapper, { className: `resizable-image-wrapper ${selected ? "selected" : ""}`, children: [
+    /* @__PURE__ */ jsx(
+      "img",
+      {
+        ref: imgRef,
+        src: node.attrs.src,
+        alt: node.attrs.alt || "",
+        width: node.attrs.width ? Number(node.attrs.width) : void 0,
+        height: node.attrs.height ? Number(node.attrs.height) : void 0,
+        style: {
+          width: node.attrs.width ? `${node.attrs.width}px` : "auto",
+          height: node.attrs.height ? `${node.attrs.height}px` : "auto",
+          maxWidth: "100%",
+          display: "block"
+        },
+        draggable: false
+      }
+    ),
+    selected && /* @__PURE__ */ jsxs(Fragment, { children: [
+      /* @__PURE__ */ jsx("div", { className: "resize-outline" }),
+      handles.map((handle) => /* @__PURE__ */ jsx(
+        "div",
+        {
+          className: `resize-handle resize-handle-${handle}`,
+          onMouseDown: (e) => handleMouseDown(e, handle)
+        },
+        handle
+      ))
+    ] })
+  ] });
+};
 
 // src/components/rich-text-editor/extensions.ts
 var FontFamily = Extension.create({
@@ -12154,6 +12244,89 @@ var FontSize = Extension.create({
     };
   }
 });
+var ResizableImageExtension = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("width") || null,
+        renderHTML: (attributes) => {
+          if (!attributes.width) {
+            return {};
+          }
+          return {
+            width: attributes.width
+          };
+        }
+      },
+      height: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("height") || null,
+        renderHTML: (attributes) => {
+          if (!attributes.height) {
+            return {};
+          }
+          return {
+            height: attributes.height
+          };
+        }
+      }
+    };
+  },
+  addNodeView() {
+    return ({ node, getPos, editor }) => {
+      const ReactComponent = () => {
+        const [selected, setSelected] = React39.useState(false);
+        React39.useEffect(() => {
+          const updateSelection = () => {
+            const { from, to } = editor.state.selection;
+            const pos = typeof getPos === "function" ? getPos() : null;
+            if (pos !== null && pos >= from && pos <= to) {
+              setSelected(true);
+            } else {
+              setSelected(false);
+            }
+          };
+          editor.on("selectionUpdate", updateSelection);
+          updateSelection();
+          return () => {
+            editor.off("selectionUpdate", updateSelection);
+          };
+        }, [editor]);
+        const updateAttributes2 = (attrs) => {
+          const pos = typeof getPos === "function" ? getPos() : null;
+          if (pos !== null) {
+            editor.commands.updateAttributes("image", attrs);
+          }
+        };
+        return React39.createElement(ResizableImage, {
+          node,
+          updateAttributes: updateAttributes2,
+          selected
+        });
+      };
+      const renderer = new ReactRenderer(ReactComponent, {
+        editor,
+        props: {}
+      });
+      return {
+        dom: renderer.dom,
+        contentDOM: null,
+        update: (updatedNode) => {
+          if (updatedNode.type.name !== this.name) {
+            return false;
+          }
+          renderer.updateProps({ node: updatedNode });
+          return true;
+        },
+        destroy: () => {
+          renderer.destroy();
+        }
+      };
+    };
+  }
+});
 var extensions = [
   StarterKit.configure({
     blockquote: false
@@ -12163,7 +12336,7 @@ var extensions = [
   TextStyle,
   FontFamily,
   FontSize,
-  Image.configure({
+  ResizableImageExtension.configure({
     inline: true,
     allowBase64: true
   }),
@@ -12619,7 +12792,7 @@ var RichTextEditor = React39.forwardRef(
                 onFileUpload: onFileUpload ? handleFileUpload : void 0
               }
             ),
-            slotAfter: /* @__PURE__ */ jsx(SelectedFiles, { files, onDeleteFile: handleDeleteFile }),
+            slotAfter: files.length > 0 ? /* @__PURE__ */ jsx(SelectedFiles, { files, onDeleteFile: handleDeleteFile }) : void 0,
             extensions,
             editorProps: {
               attributes: {
