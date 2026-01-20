@@ -1,12 +1,18 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 import { cn } from "@/lib/utils"
-import type { LucideProps } from "lucide-react"
+
+// Define Lucide icon props without importing from lucide-react
+interface LucideIconProps extends React.SVGProps<SVGSVGElement> {
+  size?: number | string
+  strokeWidth?: number | string
+  color?: string
+}
 
 export interface Tab {
   id: string
   label?: string
-  icon?: React.ComponentType<LucideProps>
+  icon?: React.ComponentType<LucideIconProps>
   renderLabel?: React.ReactNode
 }
 
