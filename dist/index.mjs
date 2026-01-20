@@ -12493,12 +12493,12 @@ var extensions = [
     // We'll use the Blockquote extension instead
     bulletList: {
       HTMLAttributes: {
-        class: "list-disc ml-6 my-4"
+        style: "list-style-type: disc; margin-left: 1.5rem; margin-top: 1rem; margin-bottom: 1rem;"
       }
     },
     orderedList: {
       HTMLAttributes: {
-        class: "list-decimal ml-6 my-4"
+        style: "list-style-type: decimal; margin-left: 1.5rem; margin-top: 1rem; margin-bottom: 1rem;"
       }
     },
     listItem: {
