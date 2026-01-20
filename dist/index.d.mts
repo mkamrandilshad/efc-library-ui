@@ -54,8 +54,8 @@ declare function useIsMobile(): boolean;
  */
 /**
  * Base theme color tokens that can be customized
- * All colors should be provided in HSL format without the hsl() wrapper
- * Example: "222.2 47.4% 11.2%" instead of "hsl(222.2, 47.4%, 11.2%)"
+ * Colors can be provided in hex format (e.g., '#1a1a1a') or HSL format (e.g., '222.2 47.4% 11.2%')
+ * Hex colors will be automatically converted to HSL format internally
  */
 interface ThemeColors {
     /** Background color */
@@ -129,10 +129,8 @@ interface ThemeColors {
  * Props for the ThemeProvider component
  */
 interface ThemeProviderProps {
-    /** Light mode theme colors */
+    /** Theme colors - the consuming application should handle dark/light mode switching */
     theme?: ThemeColors;
-    /** Dark mode theme colors */
-    darkTheme?: ThemeColors;
     /** Optional scope selector (e.g., a CSS class or ID) to apply theme to a specific element instead of :root */
     scope?: string;
     /** Child components */
@@ -146,19 +144,15 @@ interface ThemeProviderProps {
  * ```tsx
  * <ThemeProvider
  *   theme={{
- *     primary: '222.2 47.4% 11.2%',
- *     'primary-foreground': '210 40% 98%',
- *   }}
- *   darkTheme={{
- *     primary: '210 40% 98%',
- *     'primary-foreground': '222.2 47.4% 11.2%',
+ *     primary: '#1a1a1a',
+ *     'primary-foreground': '#f5f5f5',
  *   }}
  * >
  *   <App />
  * </ThemeProvider>
  * ```
  */
-declare function ThemeProvider({ theme, darkTheme, scope, children, }: ThemeProviderProps): react_jsx_runtime.JSX.Element;
+declare function ThemeProvider({ theme, scope, children, }: ThemeProviderProps): react_jsx_runtime.JSX.Element;
 
 declare const Accordion: React$1.ForwardRefExoticComponent<(AccordionPrimitive.AccordionSingleProps | AccordionPrimitive.AccordionMultipleProps) & React$1.RefAttributes<HTMLDivElement>>;
 declare const AccordionItem: React$1.ForwardRefExoticComponent<Omit<AccordionPrimitive.AccordionItemProps & React$1.RefAttributes<HTMLDivElement>, "ref"> & React$1.RefAttributes<HTMLDivElement>>;

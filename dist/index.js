@@ -125,6 +125,49 @@ function useIsMobile() {
   }, []);
   return !!isMobile;
 }
+function hexToHsl(hex) {
+  hex = hex.replace("#", "");
+  if (hex.length === 3) {
+    hex = hex.split("").map((char) => char + char).join("");
+  }
+  const r = parseInt(hex.substring(0, 2), 16) / 255;
+  const g = parseInt(hex.substring(2, 4), 16) / 255;
+  const b = parseInt(hex.substring(4, 6), 16) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+  h = Math.round(h * 360 * 10) / 10;
+  s = Math.round(s * 100 * 10) / 10;
+  const lPercent = Math.round(l * 100 * 10) / 10;
+  return `${h} ${s}% ${lPercent}%`;
+}
+function normalizeColor(color) {
+  if (!color) return "";
+  if (color.includes("%")) {
+    return color;
+  }
+  if (color.startsWith("#")) {
+    return hexToHsl(color);
+  }
+  return color;
+}
 function applyTheme(theme, scope) {
   if (!theme) return;
   const targetElement = scope ? document.querySelector(scope) : document.documentElement;
@@ -135,10 +178,11 @@ function applyTheme(theme, scope) {
     return;
   }
   Object.entries(theme).forEach(([key, value]) => {
-    if (value !== void 0) {
+    if (value !== void 0 && typeof value === "string") {
       const cssVariableName = `--${key}`;
       if (targetElement instanceof HTMLElement) {
-        targetElement.style.setProperty(cssVariableName, value);
+        const normalizedValue = key === "radius" ? value : normalizeColor(value);
+        targetElement.style.setProperty(cssVariableName, normalizedValue);
       }
     }
   });
@@ -156,7 +200,6 @@ function removeTheme(theme, scope) {
 }
 function ThemeProvider({
   theme,
-  darkTheme,
   scope,
   children
 }) {
@@ -167,27 +210,6 @@ function ThemeProvider({
       removeTheme(theme, scope);
     };
   }, [theme, scope]);
-  React39__namespace.useEffect(() => {
-    if (!darkTheme || typeof document === "undefined") return;
-    const updateTheme = () => {
-      const isDark = document.documentElement.classList.contains("dark") || document.documentElement.getAttribute("data-theme") === "dark";
-      if (isDark) {
-        applyTheme(darkTheme, scope);
-      } else {
-        removeTheme(darkTheme, scope);
-      }
-    };
-    updateTheme();
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme"]
-    });
-    return () => {
-      observer.disconnect();
-      removeTheme(darkTheme, scope);
-    };
-  }, [darkTheme, scope]);
   return /* @__PURE__ */ jsxRuntime.jsx(jsxRuntime.Fragment, { children });
 }
 var Accordion = AccordionPrimitive__namespace.Root;

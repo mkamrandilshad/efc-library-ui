@@ -4,8 +4,8 @@
 
 /**
  * Base theme color tokens that can be customized
- * All colors should be provided in HSL format without the hsl() wrapper
- * Example: "222.2 47.4% 11.2%" instead of "hsl(222.2, 47.4%, 11.2%)"
+ * Colors can be provided in hex format (e.g., '#1a1a1a') or HSL format (e.g., '222.2 47.4% 11.2%')
+ * Hex colors will be automatically converted to HSL format internally
  */
 export interface ThemeColors {
   /** Background color */
@@ -80,10 +80,8 @@ export interface ThemeColors {
  * Props for the ThemeProvider component
  */
 export interface ThemeProviderProps {
-  /** Light mode theme colors */
+  /** Theme colors - the consuming application should handle dark/light mode switching */
   theme?: ThemeColors;
-  /** Dark mode theme colors */
-  darkTheme?: ThemeColors;
   /** Optional scope selector (e.g., a CSS class or ID) to apply theme to a specific element instead of :root */
   scope?: string;
   /** Child components */
