@@ -12521,8 +12521,18 @@ var ResizableImageExtension = extensionImage.Image.extend({
 });
 var extensions = [
   StarterKit__default.default.configure({
-    blockquote: false
+    blockquote: false,
     // We'll use the Blockquote extension instead
+    bulletList: true,
+    orderedList: true,
+    listItem: true,
+    heading: {
+      levels: [1, 2, 3]
+    },
+    paragraph: true,
+    text: true,
+    bold: true,
+    italic: true
   }),
   extensionColor.Color,
   TextStyle__default.default,
@@ -12540,7 +12550,7 @@ var extensions = [
   }),
   extensionUnderline.Underline,
   extensionTextAlign.TextAlign.configure({
-    types: ["heading", "paragraph"]
+    types: ["heading", "paragraph", "listItem"]
   }),
   extensionHighlight.Highlight.configure({
     multicolor: true

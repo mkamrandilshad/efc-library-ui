@@ -12467,8 +12467,18 @@ var ResizableImageExtension = Image.extend({
 });
 var extensions = [
   StarterKit.configure({
-    blockquote: false
+    blockquote: false,
     // We'll use the Blockquote extension instead
+    bulletList: true,
+    orderedList: true,
+    listItem: true,
+    heading: {
+      levels: [1, 2, 3]
+    },
+    paragraph: true,
+    text: true,
+    bold: true,
+    italic: true
   }),
   Color,
   TextStyle,
@@ -12486,7 +12496,7 @@ var extensions = [
   }),
   Underline,
   TextAlign.configure({
-    types: ["heading", "paragraph"]
+    types: ["heading", "paragraph", "listItem"]
   }),
   Highlight.configure({
     multicolor: true
