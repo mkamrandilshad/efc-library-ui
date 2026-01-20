@@ -8,8 +8,7 @@ import StarterKit from "@tiptap/starter-kit"
 import TextStyle from "@tiptap/extension-text-style"
 import Blockquote from "@tiptap/extension-blockquote"
 import { Extension } from "@tiptap/core"
-import { ReactRenderer } from "@tiptap/react"
-import * as React from "react"
+import { ReactNodeViewRenderer } from "@tiptap/react"
 import { ResizableImage } from "./resizable-image"
 
 // Custom extension for Font Family
@@ -124,25 +123,33 @@ const ResizableImageExtension = Image.extend({
       ...this.parent?.(),
       width: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("width") || null,
+        parseHTML: (element: HTMLElement) => {
+          const width = element.getAttribute("width") || element.style.width
+          return width ? parseInt(width) : null
+        },
         renderHTML: (attributes: { width?: string | number | null }) => {
           if (!attributes.width) {
             return {}
           }
           return {
             width: attributes.width,
+            style: `width: ${attributes.width}px`,
           }
         },
       },
       height: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("height") || null,
+        parseHTML: (element: HTMLElement) => {
+          const height = element.getAttribute("height") || element.style.height
+          return height ? parseInt(height) : null
+        },
         renderHTML: (attributes: { height?: string | number | null }) => {
           if (!attributes.height) {
             return {}
           }
           return {
             height: attributes.height,
+            style: `height: ${attributes.height}px`,
           }
         },
       },
@@ -150,63 +157,7 @@ const ResizableImageExtension = Image.extend({
   },
 
   addNodeView() {
-    return ({ node, getPos, editor }: { node: any; getPos: (() => number) | undefined; editor: any }) => {
-      const ReactComponent = () => {
-        const [selected, setSelected] = React.useState(false)
-
-        React.useEffect(() => {
-          const updateSelection = () => {
-            const { from, to } = editor.state.selection
-            const pos = typeof getPos === "function" ? getPos() : null
-            if (pos !== null && pos >= from && pos <= to) {
-              setSelected(true)
-            } else {
-              setSelected(false)
-            }
-          }
-
-          editor.on("selectionUpdate", updateSelection)
-          updateSelection()
-
-          return () => {
-            editor.off("selectionUpdate", updateSelection)
-          }
-        }, [editor])
-
-        const updateAttributes = (attrs: { width?: number; height?: number }) => {
-          const pos = typeof getPos === "function" ? getPos() : null
-          if (pos !== null) {
-            editor.commands.updateAttributes("image", attrs)
-          }
-        }
-
-        return React.createElement(ResizableImage, {
-          node,
-          updateAttributes,
-          selected,
-        })
-      }
-
-      const renderer = new ReactRenderer(ReactComponent, {
-        editor,
-        props: {},
-      })
-
-      return {
-        dom: renderer.dom,
-        contentDOM: null,
-        update: (updatedNode: any) => {
-          if (updatedNode.type.name !== this.name) {
-            return false
-          }
-          renderer.updateProps({ node: updatedNode })
-          return true
-        },
-        destroy: () => {
-          renderer.destroy()
-        },
-      }
-    }
+    return ReactNodeViewRenderer(ResizableImage)
   },
 })
 
