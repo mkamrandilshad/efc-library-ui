@@ -501,6 +501,34 @@ export {
   TooltipProvider,
 } from "./components/tooltip";
 
+// Stat Card
+export { StatCard } from "./components/stat-card";
+export type { StatCardProps } from "./components/stat-card";
+
+// Stat Display
+export { StatDisplay } from "./components/stat-display";
+export type { StatDisplayProps } from "./components/stat-display";
+
+// Attachment
+export { Attachment } from "./components/attachment";
+export type { AttachmentProps } from "./components/attachment";
+
+// Comment
+export { Comment } from "./components/comment";
+export type { CommentProps } from "./components/comment";
+
+// Feed Post
+export { FeedPost } from "./components/feed-post";
+export type { FeedPostProps } from "./components/feed-post";
+
+// Timeline
+export { Timeline } from "./components/timeline";
+export type { TimelineProps, TimelineItemProps } from "./components/timeline";
+
+// Profile Card
+export { ProfileCard } from "./components/profile-card";
+export type { ProfileCardProps, ProfileDetail } from "./components/profile-card";
+
 // Rich Text Editor
 export {
   RichTextEditor,
