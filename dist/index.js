@@ -469,7 +469,10 @@ var badgeVariants = classVarianceAuthority.cva(
         default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
         secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground"
+        outline: "text-foreground",
+        critical: "border-transparent bg-red-600 text-white hover:bg-red-700",
+        high: "border-transparent bg-orange-600 text-white hover:bg-orange-700",
+        normal: "border-transparent bg-green-600 text-white hover:bg-green-700"
       }
     },
     defaultVariants: {
@@ -4821,6 +4824,343 @@ var ToggleGroupItem = React39__namespace.forwardRef(({ className, children, vari
   );
 });
 ToggleGroupItem.displayName = ToggleGroupPrimitive__namespace.Item.displayName;
+var StatCard = React39__namespace.forwardRef(
+  ({ className, icon: Icon2, value, title, subtitle, variant = "default", ...props }, ref) => {
+    const valueColorClass = variant === "positive" ? "text-green-600" : variant === "negative" ? "text-orange-600" : "text-green-600";
+    return /* @__PURE__ */ jsxRuntime.jsx(Card, { ref, className: cn("", className), ...props, children: /* @__PURE__ */ jsxRuntime.jsx(CardContent, { className: "p-6", children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col space-y-2", children: [
+      Icon2 && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-start mb-2", children: /* @__PURE__ */ jsxRuntime.jsx(Icon2, { className: "h-6 w-6 text-primary" }) }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("text-3xl font-bold", valueColorClass), children: value }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-base font-semibold text-foreground", children: title }),
+      subtitle && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-muted-foreground", children: subtitle })
+    ] }) }) });
+  }
+);
+StatCard.displayName = "StatCard";
+var StatDisplay = React39__namespace.forwardRef(
+  ({ className, current, previous, label, subLabel, ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      "div",
+      {
+        ref,
+        className: cn("flex flex-col items-center justify-center space-y-2", className),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-baseline gap-2", children: [
+            /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-3xl font-bold text-green-600", children: current }),
+            previous !== void 0 && /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
+              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-3xl font-bold text-muted-foreground", children: "/" }),
+              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-3xl font-bold text-muted-foreground", children: previous })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-base font-semibold text-foreground", children: label }),
+          subLabel && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-muted-foreground", children: subLabel })
+        ]
+      }
+    );
+  }
+);
+StatDisplay.displayName = "StatDisplay";
+var Attachment = React39__namespace.forwardRef(
+  ({ className, filename, variant = "outline", ...props }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      Button,
+      {
+        ref,
+        variant,
+        className: cn(
+          "w-full justify-start gap-2 h-auto py-2 px-3",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsx(lucideReact.Paperclip, { className: "h-4 w-4 shrink-0" }),
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "truncate text-sm", children: filename })
+        ]
+      }
+    );
+  }
+);
+Attachment.displayName = "Attachment";
+var Comment = React39__namespace.forwardRef(
+  ({
+    className,
+    avatar,
+    avatarFallback,
+    name,
+    timestamp,
+    content,
+    isNested = false,
+    showActions = true,
+    onAction,
+    ...props
+  }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      "div",
+      {
+        ref,
+        className: cn(
+          "flex gap-3",
+          isNested && "ml-12",
+          className
+        ),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsxs(Avatar, { className: "h-8 w-8 shrink-0", children: [
+            avatar && /* @__PURE__ */ jsxRuntime.jsx(AvatarImage, { src: avatar, alt: name }),
+            /* @__PURE__ */ jsxRuntime.jsx(AvatarFallback, { children: avatarFallback || name.charAt(0) })
+          ] }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1 min-w-0", children: [
+            /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2 mb-1", children: [
+              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-sm font-semibold text-foreground", children: name }),
+              /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-xs text-muted-foreground", children: timestamp }),
+              showActions && /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+                /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx("button", { className: "ml-auto h-6 w-6 flex items-center justify-center rounded-sm hover:bg-accent", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+                /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenuContent, { align: "end", children: [
+                  /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuItem, { onClick: () => onAction?.("edit"), children: "Edit" }),
+                  /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuItem, { onClick: () => onAction?.("delete"), children: "Delete" })
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-foreground", children: content })
+          ] })
+        ]
+      }
+    );
+  }
+);
+Comment.displayName = "Comment";
+var FeedPost = React39__namespace.forwardRef(
+  ({
+    className,
+    avatar,
+    avatarFallback,
+    name,
+    timestamp,
+    reference,
+    content,
+    attachment,
+    imageUrl,
+    likeCount = 0,
+    isLiked = false,
+    onLike,
+    onComment,
+    showActions = true,
+    ...props
+  }, ref) => {
+    const [commentText, setCommentText] = React39__namespace.useState("");
+    const handleCommentSubmit = (e) => {
+      e.preventDefault();
+      if (commentText.trim() && onComment) {
+        onComment(commentText);
+        setCommentText("");
+      }
+    };
+    return /* @__PURE__ */ jsxRuntime.jsx(Card, { ref, className: cn("", className), ...props, children: /* @__PURE__ */ jsxRuntime.jsx(CardContent, { className: "p-6", children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-4", children: [
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start justify-between", children: [
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ jsxRuntime.jsxs(Avatar, { className: "h-10 w-10", children: [
+            avatar && /* @__PURE__ */ jsxRuntime.jsx(AvatarImage, { src: avatar, alt: name }),
+            /* @__PURE__ */ jsxRuntime.jsx(AvatarFallback, { children: avatarFallback || name.charAt(0) })
+          ] }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col", children: [
+            /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-sm font-semibold text-foreground", children: name }),
+            /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-xs text-muted-foreground", children: timestamp })
+          ] })
+        ] }),
+        showActions && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntime.jsx("button", { className: "h-8 w-8 flex items-center justify-center rounded-sm hover:bg-accent", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.Bell, { className: "h-4 w-4" }) }),
+          /* @__PURE__ */ jsxRuntime.jsx("button", { className: "h-8 w-8 flex items-center justify-center rounded-sm hover:bg-accent", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.Flag, { className: "h-4 w-4" }) }),
+          /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenu, { children: [
+            /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuTrigger, { asChild: true, children: /* @__PURE__ */ jsxRuntime.jsx("button", { className: "h-8 w-8 flex items-center justify-center rounded-sm hover:bg-accent", children: /* @__PURE__ */ jsxRuntime.jsx(lucideReact.MoreVertical, { className: "h-4 w-4" }) }) }),
+            /* @__PURE__ */ jsxRuntime.jsxs(DropdownMenuContent, { align: "end", children: [
+              /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuItem, { children: "Edit" }),
+              /* @__PURE__ */ jsxRuntime.jsx(DropdownMenuItem, { children: "Delete" })
+            ] })
+          ] })
+        ] })
+      ] }),
+      reference && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-primary font-medium", children: reference }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-foreground whitespace-pre-wrap", children: content }),
+      attachment && /* @__PURE__ */ jsxRuntime.jsx(
+        Attachment,
+        {
+          filename: attachment.filename,
+          onClick: attachment.onClick
+        }
+      ),
+      imageUrl && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "rounded-md overflow-hidden", children: /* @__PURE__ */ jsxRuntime.jsx(
+        "img",
+        {
+          src: imageUrl,
+          alt: "Post attachment",
+          className: "w-full h-auto object-cover"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-y-3", children: [
+        /* @__PURE__ */ jsxRuntime.jsx(Separator, {}),
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center gap-4", children: [
+          /* @__PURE__ */ jsxRuntime.jsxs(
+            "button",
+            {
+              onClick: onLike,
+              className: cn(
+                "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors",
+                isLiked && "text-primary"
+              ),
+              children: [
+                /* @__PURE__ */ jsxRuntime.jsx(lucideReact.ThumbsUp, { className: "h-4 w-4" }),
+                /* @__PURE__ */ jsxRuntime.jsx("span", { children: likeCount })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntime.jsx("form", { onSubmit: handleCommentSubmit, className: "flex-1", children: /* @__PURE__ */ jsxRuntime.jsx(
+            Input,
+            {
+              type: "text",
+              placeholder: "Write a comment...",
+              value: commentText,
+              onChange: (e) => setCommentText(e.target.value),
+              className: "w-full"
+            }
+          ) })
+        ] })
+      ] })
+    ] }) }) });
+  }
+);
+FeedPost.displayName = "FeedPost";
+var formatTime = (hour, format2 = "12h") => {
+  if (format2 === "24h") {
+    return `${hour.toString().padStart(2, "0")}:00`;
+  }
+  const period = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+  return `${displayHour}:00 ${period}`;
+};
+var parseTime = (timeStr) => {
+  const [time, period] = timeStr.split(" ");
+  const [hours, minutes] = time.split(":").map(Number);
+  let hour24 = hours;
+  if (period) {
+    if (period.toUpperCase() === "PM" && hours !== 12) {
+      hour24 = hours + 12;
+    } else if (period.toUpperCase() === "AM" && hours === 12) {
+      hour24 = 0;
+    }
+  }
+  return hour24 + minutes / 60;
+};
+var Timeline = React39__namespace.forwardRef(
+  ({
+    className,
+    items,
+    startHour = 0,
+    endHour = 24,
+    hourFormat = "12h",
+    ...props
+  }, ref) => {
+    const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
+    const getItemPosition = (item) => {
+      const start = parseTime(item.startTime);
+      const end = parseTime(item.endTime);
+      const duration = end - start;
+      const totalHours = endHour - startHour;
+      const topPercent = (start - startHour) / totalHours * 100;
+      const heightPercent = duration / totalHours * 100;
+      return {
+        top: `${Math.max(0, topPercent)}%`,
+        height: `${Math.min(100, heightPercent)}%`
+      };
+    };
+    return /* @__PURE__ */ jsxRuntime.jsxs(
+      "div",
+      {
+        ref,
+        className: cn("relative flex gap-4", className),
+        ...props,
+        children: [
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex flex-col gap-4 min-w-[80px]", children: hours.map((hour) => /* @__PURE__ */ jsxRuntime.jsx(
+            "div",
+            {
+              className: "text-sm text-muted-foreground",
+              children: formatTime(hour, hourFormat)
+            },
+            hour
+          )) }),
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex-1 relative min-h-[400px]", children: items.map((item) => {
+            const position = getItemPosition(item);
+            return /* @__PURE__ */ jsxRuntime.jsx(
+              "div",
+              {
+                className: cn(
+                  "absolute left-0 right-0 rounded-md p-3 text-white",
+                  "flex flex-col justify-between",
+                  item.color || "bg-primary"
+                ),
+                style: {
+                  top: position.top,
+                  height: position.height,
+                  minHeight: "60px"
+                },
+                children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start justify-between", children: [
+                  /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1", children: [
+                    /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-semibold text-sm", children: item.title }),
+                    /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs opacity-90 mt-1", children: [
+                      item.startTime,
+                      " - ",
+                      item.endTime
+                    ] })
+                  ] }),
+                  item.capacity && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs font-medium opacity-90 ml-2", children: [
+                    item.capacity.current,
+                    "/",
+                    item.capacity.max
+                  ] })
+                ] })
+              },
+              item.id
+            );
+          }) })
+        ]
+      }
+    );
+  }
+);
+Timeline.displayName = "Timeline";
+var ProfileCard = React39__namespace.forwardRef(
+  ({
+    className,
+    avatar,
+    avatarFallback,
+    details,
+    actions,
+    ...props
+  }, ref) => {
+    return /* @__PURE__ */ jsxRuntime.jsx(Card, { ref, className: cn("", className), ...props, children: /* @__PURE__ */ jsxRuntime.jsx(CardContent, { className: "p-6", children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col items-center space-y-6", children: [
+      /* @__PURE__ */ jsxRuntime.jsxs(Avatar, { className: "h-24 w-24", children: [
+        avatar && /* @__PURE__ */ jsxRuntime.jsx(AvatarImage, { src: avatar, alt: "Profile" }),
+        /* @__PURE__ */ jsxRuntime.jsx(AvatarFallback, { className: "text-2xl", children: avatarFallback || "?" })
+      ] }),
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "w-full space-y-0", children: details.map((detail, index) => /* @__PURE__ */ jsxRuntime.jsxs(React39__namespace.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between py-3", children: [
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-sm text-muted-foreground", children: detail.label }),
+          /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-sm font-medium text-foreground", children: detail.value })
+        ] }),
+        index < details.length - 1 && /* @__PURE__ */ jsxRuntime.jsx(Separator, {})
+      ] }, index)) }),
+      actions && actions.length > 0 && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center gap-2 w-full justify-end", children: actions.map((action, index) => /* @__PURE__ */ jsxRuntime.jsx(
+        Button,
+        {
+          variant: action.variant || "outline",
+          onClick: action.onClick,
+          children: action.label
+        },
+        index
+      )) })
+    ] }) }) });
+  }
+);
+ProfileCard.displayName = "ProfileCard";
 
 // node_modules/orderedmap/dist/index.js
 function OrderedMap(content) {
@@ -4996,7 +5336,7 @@ function findDiffEnd(a, b, posA, posB) {
     posB -= size;
   }
 }
-var Fragment5 = class _Fragment {
+var Fragment7 = class _Fragment {
   /**
   @internal
   */
@@ -5288,7 +5628,7 @@ var Fragment5 = class _Fragment {
     throw new RangeError("Can not convert " + nodes + " to a Fragment" + (nodes.nodesBetween ? " (looks like multiple versions of prosemirror-model were loaded)" : ""));
   }
 };
-Fragment5.empty = new Fragment5([], 0);
+Fragment7.empty = new Fragment7([], 0);
 var found = { index: 0, offset: 0 };
 function retIndex(index, offset) {
   found.index = index;
@@ -5513,7 +5853,7 @@ var Slice = class _Slice {
     let openStart = json.openStart || 0, openEnd = json.openEnd || 0;
     if (typeof openStart != "number" || typeof openEnd != "number")
       throw new RangeError("Invalid input for Slice.fromJSON");
-    return new _Slice(Fragment5.fromJSON(schema, json.content), openStart, openEnd);
+    return new _Slice(Fragment7.fromJSON(schema, json.content), openStart, openEnd);
   }
   /**
   Create a slice from a fragment by taking the maximum possible
@@ -5528,7 +5868,7 @@ var Slice = class _Slice {
     return new _Slice(fragment, openStart, openEnd);
   }
 };
-Slice.empty = new Slice(Fragment5.empty, 0, 0);
+Slice.empty = new Slice(Fragment7.empty, 0, 0);
 function removeRange(content, from, to) {
   let { index, offset } = content.findIndex(from), child = content.maybeChild(index);
   let { index: indexTo, offset: offsetTo } = content.findIndex(to);
@@ -5626,7 +5966,7 @@ function replaceThreeWay($from, $start, $end, $to, depth) {
       addNode(close(openEnd, replaceTwoWay($end, $to, depth + 1)), content);
   }
   addRange($to, null, depth, content);
-  return new Fragment5(content);
+  return new Fragment7(content);
 }
 function replaceTwoWay($from, $to, depth) {
   let content = [];
@@ -5636,13 +5976,13 @@ function replaceTwoWay($from, $to, depth) {
     addNode(close(type, replaceTwoWay($from, $to, depth + 1)), content);
   }
   addRange($to, null, depth, content);
-  return new Fragment5(content);
+  return new Fragment7(content);
 }
 function prepareSliceForReplace(slice, $along) {
   let extra = $along.depth - slice.openStart, parent = $along.node(extra);
   let node = parent.copy(slice.content);
   for (let i = extra - 1; i >= 0; i--)
-    node = $along.node(i).copy(Fragment5.from(node));
+    node = $along.node(i).copy(Fragment7.from(node));
   return {
     start: node.resolveNoCache(slice.openStart + extra),
     end: node.resolveNoCache(node.content.size - slice.openEnd - extra)
@@ -5981,7 +6321,7 @@ var Node = class _Node {
     this.type = type;
     this.attrs = attrs;
     this.marks = marks;
-    this.content = content || Fragment5.empty;
+    this.content = content || Fragment7.empty;
   }
   /**
   The array of this node's child nodes.
@@ -6286,7 +6626,7 @@ var Node = class _Node {
   can optionally pass `start` and `end` indices into the
   replacement fragment.
   */
-  canReplace(from, to, replacement = Fragment5.empty, start = 0, end = replacement.childCount) {
+  canReplace(from, to, replacement = Fragment7.empty, start = 0, end = replacement.childCount) {
     let one = this.contentMatchAt(from).matchFragment(replacement, start, end);
     let two = one && one.matchFragment(this.content, to);
     if (!two || !two.validEnd)
@@ -6368,7 +6708,7 @@ var Node = class _Node {
         throw new RangeError("Invalid text node in JSON");
       return schema.text(json.text, marks);
     }
-    let content = Fragment5.fromJSON(schema, json.content);
+    let content = Fragment7.fromJSON(schema, json.content);
     let node = schema.nodeType(json.type).create(json.attrs, content, marks);
     node.type.checkAttrs(node.attrs);
     return node;
@@ -6510,7 +6850,7 @@ var ContentMatch = class _ContentMatch {
     function search(match, types) {
       let finished = match.matchFragment(after, startIndex);
       if (finished && (!toEnd || finished.validEnd))
-        return Fragment5.from(types.map((tp) => tp.createAndFill()));
+        return Fragment7.from(types.map((tp) => tp.createAndFill()));
       for (let i = 0; i < match.next.length; i++) {
         let { type, next } = match.next[i];
         if (!(type.isText || type.hasRequiredAttrs()) && seen.indexOf(next) == -1) {
@@ -6962,7 +7302,7 @@ var NodeType = class _NodeType {
   create(attrs = null, content, marks) {
     if (this.isText)
       throw new Error("NodeType.create can't construct text nodes");
-    return new Node(this, this.computeAttrs(attrs), Fragment5.from(content), Mark.setFrom(marks));
+    return new Node(this, this.computeAttrs(attrs), Fragment7.from(content), Mark.setFrom(marks));
   }
   /**
   Like [`create`](https://prosemirror.net/docs/ref/#model.NodeType.create), but check the given content
@@ -6970,7 +7310,7 @@ var NodeType = class _NodeType {
   if it doesn't match.
   */
   createChecked(attrs = null, content, marks) {
-    content = Fragment5.from(content);
+    content = Fragment7.from(content);
     this.checkContent(content);
     return new Node(this, this.computeAttrs(attrs), content, Mark.setFrom(marks));
   }
@@ -6984,7 +7324,7 @@ var NodeType = class _NodeType {
   */
   createAndFill(attrs = null, content, marks) {
     attrs = this.computeAttrs(attrs);
-    content = Fragment5.from(content);
+    content = Fragment7.from(content);
     if (content.size) {
       let before = this.contentMatch.fillBefore(content);
       if (!before)
@@ -6992,7 +7332,7 @@ var NodeType = class _NodeType {
       content = before.append(content);
     }
     let matched = this.contentMatch.matchFragment(content);
-    let after = matched && matched.fillBefore(Fragment5.empty, true);
+    let after = matched && matched.fillBefore(Fragment7.empty, true);
     if (!after)
       return null;
     return new Node(this, attrs, content.append(after), Mark.setFrom(marks));
@@ -7456,7 +7796,7 @@ var NodeContext = class {
     if (!this.match) {
       if (!this.type)
         return [];
-      let fill = this.type.contentMatch.fillBefore(Fragment5.from(node));
+      let fill = this.type.contentMatch.fillBefore(Fragment7.from(node));
       if (fill) {
         this.match = this.type.contentMatch.matchFragment(fill);
       } else {
@@ -7482,9 +7822,9 @@ var NodeContext = class {
           this.content[this.content.length - 1] = text.withText(text.text.slice(0, text.text.length - m[0].length));
       }
     }
-    let content = Fragment5.from(this.content);
+    let content = Fragment7.from(this.content);
     if (!openEnd && this.match)
-      content = content.append(this.match.fillBefore(Fragment5.empty, true));
+      content = content.append(this.match.fillBefore(Fragment7.empty, true));
     return this.type ? this.type.create(this.attrs, content, this.marks) : content;
   }
   inlineContext(node) {
@@ -8177,7 +8517,7 @@ function mapFragment(fragment, f, parent) {
       child = f(child, parent, i);
     mapped.push(child);
   }
-  return Fragment5.fromArray(mapped);
+  return Fragment7.fromArray(mapped);
 }
 var AddMarkStep = class _AddMarkStep extends Step {
   /**
@@ -8294,7 +8634,7 @@ var AddNodeMarkStep = class _AddNodeMarkStep extends Step {
     if (!node)
       return StepResult.fail("No node at mark step's position");
     let updated = node.type.create(node.attrs, null, this.mark.addToSet(node.marks));
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment5.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   invert(doc) {
     let node = doc.nodeAt(this.pos);
@@ -8340,7 +8680,7 @@ var RemoveNodeMarkStep = class _RemoveNodeMarkStep extends Step {
     if (!node)
       return StepResult.fail("No node at mark step's position");
     let updated = node.type.create(node.attrs, null, this.mark.removeFromSet(node.marks));
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment5.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   invert(doc) {
     let node = doc.nodeAt(this.pos);
@@ -8657,7 +8997,7 @@ var Fitter = class {
     this.$to = $to;
     this.unplaced = unplaced;
     this.frontier = [];
-    this.placed = Fragment5.empty;
+    this.placed = Fragment7.empty;
     for (let i = 0; i <= $from.depth; i++) {
       let node = $from.node(i);
       this.frontier.push({
@@ -8666,7 +9006,7 @@ var Fitter = class {
       });
     }
     for (let i = $from.depth; i > 0; i--)
-      this.placed = Fragment5.from($from.node(i).copy(this.placed));
+      this.placed = Fragment7.from($from.node(i).copy(this.placed));
   }
   get depth() {
     return this.frontier.length - 1;
@@ -8723,7 +9063,7 @@ var Fitter = class {
         let first2 = fragment.firstChild;
         for (let frontierDepth = this.depth; frontierDepth >= 0; frontierDepth--) {
           let { type, match } = this.frontier[frontierDepth], wrap, inject = null;
-          if (pass == 1 && (first2 ? match.matchType(first2.type) || (inject = match.fillBefore(Fragment5.from(first2), false)) : parent && type.compatibleContent(parent.type)))
+          if (pass == 1 && (first2 ? match.matchType(first2.type) || (inject = match.fillBefore(Fragment7.from(first2), false)) : parent && type.compatibleContent(parent.type)))
             return { sliceDepth, frontierDepth, parent, inject };
           else if (pass == 2 && first2 && (wrap = match.findWrapping(first2.type)))
             return { sliceDepth, frontierDepth, parent, wrap };
@@ -8783,7 +9123,7 @@ var Fitter = class {
     let toEnd = taken == fragment.childCount;
     if (!toEnd)
       openEndCount = -1;
-    this.placed = addToFragment(this.placed, frontierDepth, Fragment5.from(add));
+    this.placed = addToFragment(this.placed, frontierDepth, Fragment7.from(add));
     this.frontier[frontierDepth].match = match;
     if (toEnd && openEndCount < 0 && parent && parent.type == this.frontier[this.depth].type && this.frontier.length > 1)
       this.closeFrontierNode();
@@ -8839,12 +9179,12 @@ var Fitter = class {
   openFrontierNode(type, attrs = null, content) {
     let top = this.frontier[this.depth];
     top.match = top.match.matchType(type);
-    this.placed = addToFragment(this.placed, this.depth, Fragment5.from(type.create(attrs, content)));
+    this.placed = addToFragment(this.placed, this.depth, Fragment7.from(type.create(attrs, content)));
     this.frontier.push({ type, match: type.contentMatch });
   }
   closeFrontierNode() {
     let open = this.frontier.pop();
-    let add = open.match.fillBefore(Fragment5.empty, true);
+    let add = open.match.fillBefore(Fragment7.empty, true);
     if (add.childCount)
       this.placed = addToFragment(this.placed, this.frontier.length, add);
   }
@@ -8873,7 +9213,7 @@ function closeNodeStart(node, openStart, openEnd) {
   if (openStart > 0) {
     frag = node.type.contentMatch.fillBefore(frag).append(frag);
     if (openEnd <= 0)
-      frag = frag.append(node.type.contentMatch.matchFragment(frag).fillBefore(Fragment5.empty, true));
+      frag = frag.append(node.type.contentMatch.matchFragment(frag).fillBefore(Fragment7.empty, true));
   }
   return node.copy(frag);
 }
@@ -8909,7 +9249,7 @@ var AttrStep = class _AttrStep extends Step {
       attrs[name] = node.attrs[name];
     attrs[this.attr] = this.value;
     let updated = node.type.create(attrs, null, node.marks);
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment5.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   getMap() {
     return StepMap.empty;
@@ -9293,7 +9633,7 @@ var NodeSelection = class _NodeSelection extends Selection {
     return new _NodeSelection($pos);
   }
   content() {
-    return new Slice(Fragment5.from(this.node), 0, 0);
+    return new Slice(Fragment7.from(this.node), 0, 0);
   }
   eq(other) {
     return other instanceof _NodeSelection && other.anchor == this.anchor;
@@ -9903,10 +10243,10 @@ function deleteBarrier(state, $cut, dispatch, dir) {
   let canDelAfter = !isolated && $cut.parent.canReplace($cut.index(), $cut.index() + 1);
   if (canDelAfter && (conn = (match = before.contentMatchAt(before.childCount)).findWrapping(after.type)) && match.matchType(conn[0] || after.type).validEnd) {
     if (dispatch) {
-      let end = $cut.pos + after.nodeSize, wrap = Fragment5.empty;
+      let end = $cut.pos + after.nodeSize, wrap = Fragment7.empty;
       for (let i = conn.length - 1; i >= 0; i--)
-        wrap = Fragment5.from(conn[i].create(null, wrap));
-      wrap = Fragment5.from(before.copy(wrap));
+        wrap = Fragment7.from(conn[i].create(null, wrap));
+      wrap = Fragment7.from(before.copy(wrap));
       let tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1, end, $cut.pos, end, new Slice(wrap, 1, 0), conn.length, true));
       let $joinAt = tr.doc.resolve(end + 2 * conn.length);
       if ($joinAt.nodeAfter && $joinAt.nodeAfter.type == before.type && canJoin(tr.doc, $joinAt.pos))
@@ -9935,9 +10275,9 @@ function deleteBarrier(state, $cut, dispatch, dir) {
       afterDepth++;
     if (at.canReplace(at.childCount, at.childCount, afterText.content)) {
       if (dispatch) {
-        let end = Fragment5.empty;
+        let end = Fragment7.empty;
         for (let i = wrap.length - 1; i >= 0; i--)
-          end = Fragment5.from(wrap[i].copy(end));
+          end = Fragment7.from(wrap[i].copy(end));
         let tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrap.length, $cut.pos + after.nodeSize, $cut.pos + afterDepth, $cut.pos + after.nodeSize - afterDepth, new Slice(end, wrap.length, 0), 0, true));
         dispatch(tr.scrollIntoView());
       }
@@ -10054,9 +10394,9 @@ function wrapRangeInList(tr, range, listType, attrs = null) {
   return true;
 }
 function doWrapInList(tr, range, wrappers, joinBefore, listType) {
-  let content = Fragment5.empty;
+  let content = Fragment7.empty;
   for (let i = wrappers.length - 1; i >= 0; i--)
-    content = Fragment5.from(wrappers[i].type.create(wrappers[i].attrs, content));
+    content = Fragment7.from(wrappers[i].type.create(wrappers[i].attrs, content));
   tr.step(new ReplaceAroundStep(range.start - (joinBefore ? 2 : 0), range.end, range.start, range.end, new Slice(content, 0, 0), wrappers.length, true));
   let found2 = 0;
   for (let i = 0; i < wrappers.length; i++)
@@ -10090,7 +10430,7 @@ function liftListItem(itemType) {
 function liftToOuterList(state, dispatch, itemType, range) {
   let tr = state.tr, end = range.end, endOfList = range.$to.end(range.depth);
   if (end < endOfList) {
-    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment5.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true));
+    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment7.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true));
     range = new NodeRange(tr.doc.resolve(range.$from.pos), tr.doc.resolve(endOfList), range.depth);
   }
   const target = liftTarget(range);
@@ -10114,10 +10454,10 @@ function liftOutOfList(state, dispatch, range) {
     return false;
   let atStart = range.startIndex == 0, atEnd = range.endIndex == list.childCount;
   let parent = $start.node(-1), indexBefore = $start.index(-1);
-  if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1, item.content.append(atEnd ? Fragment5.empty : Fragment5.from(list))))
+  if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1, item.content.append(atEnd ? Fragment7.empty : Fragment7.from(list))))
     return false;
   let start = $start.pos, end = start + item.nodeSize;
-  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1, new Slice((atStart ? Fragment5.empty : Fragment5.from(list.copy(Fragment5.empty))).append(atEnd ? Fragment5.empty : Fragment5.from(list.copy(Fragment5.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
+  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1, new Slice((atStart ? Fragment7.empty : Fragment7.from(list.copy(Fragment7.empty))).append(atEnd ? Fragment7.empty : Fragment7.from(list.copy(Fragment7.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
   dispatch(tr.scrollIntoView());
   return true;
 }
@@ -10135,8 +10475,8 @@ function sinkListItem(itemType) {
       return false;
     if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type;
-      let inner = Fragment5.from(nestedBefore ? itemType.create() : null);
-      let slice = new Slice(Fragment5.from(itemType.create(null, Fragment5.from(parent.type.create(null, inner)))), nestedBefore ? 3 : 1, 0);
+      let inner = Fragment7.from(nestedBefore ? itemType.create() : null);
+      let slice = new Slice(Fragment7.from(itemType.create(null, Fragment7.from(parent.type.create(null, inner)))), nestedBefore ? 3 : 1, 0);
       let before = range.start, after = range.end;
       dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after, before, after, slice, 1, true)).scrollIntoView());
     }
@@ -10768,7 +11108,7 @@ function elementFromString(value) {
   return removeWhitespaces(html);
 }
 function createNodeFromContent(content, schema, options) {
-  if (content instanceof Node || content instanceof Fragment5) {
+  if (content instanceof Node || content instanceof Fragment7) {
     return content;
   }
   options = {
@@ -10782,7 +11122,7 @@ function createNodeFromContent(content, schema, options) {
     try {
       const isArrayContent = Array.isArray(content) && content.length > 0;
       if (isArrayContent) {
-        return Fragment5.fromArray(content.map((item) => schema.nodeFromJSON(item)));
+        return Fragment7.fromArray(content.map((item) => schema.nodeFromJSON(item)));
       }
       const node = schema.nodeFromJSON(content);
       if (options.errorOnInvalidContent) {
@@ -10927,7 +11267,7 @@ var insertContentAt = (position, value, options) => ({ tr, dispatch, editor }) =
     if (isOnlyTextContent) {
       if (Array.isArray(value)) {
         newContent = value.map((v) => v.text || "").join("");
-      } else if (value instanceof Fragment5) {
+      } else if (value instanceof Fragment7) {
         let text = "";
         value.forEach((node) => {
           if (node.text) {
@@ -11580,10 +11920,10 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
       return false;
     }
     if (dispatch) {
-      let wrap = Fragment5.empty;
+      let wrap = Fragment7.empty;
       const depthBefore = $from.index(-1) ? 1 : $from.index(-2) ? 2 : 3;
       for (let d = $from.depth - depthBefore; d >= $from.depth - 3; d -= 1) {
-        wrap = Fragment5.from($from.node(d).copy(wrap));
+        wrap = Fragment7.from($from.node(d).copy(wrap));
       }
       const depthAfter = $from.indexAfter(-1) < $from.node(-2).childCount ? 1 : $from.indexAfter(-2) < $from.node(-3).childCount ? 2 : 3;
       const newNextTypeAttributes2 = {
@@ -11591,7 +11931,7 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
         ...overrideAttrs
       };
       const nextType2 = ((_a = type.contentMatch.defaultType) === null || _a === void 0 ? void 0 : _a.createAndFill(newNextTypeAttributes2)) || void 0;
-      wrap = wrap.append(Fragment5.from(type.createAndFill(null, nextType2) || void 0));
+      wrap = wrap.append(Fragment7.from(type.createAndFill(null, nextType2) || void 0));
       const start = $from.before($from.depth - (depthBefore - 1));
       tr.replace(start, $from.after(-depthAfter), new Slice(wrap, 4 - depthBefore, 0));
       let sel = -1;
@@ -13086,6 +13426,7 @@ exports.AlertDialogTitle = AlertDialogTitle;
 exports.AlertDialogTrigger = AlertDialogTrigger;
 exports.AlertTitle = AlertTitle;
 exports.AspectRatio = AspectRatio;
+exports.Attachment = Attachment;
 exports.Avatar = Avatar;
 exports.AvatarFallback = AvatarFallback;
 exports.AvatarImage = AvatarImage;
@@ -13133,6 +13474,7 @@ exports.CommandItem = CommandItem;
 exports.CommandList = CommandList;
 exports.CommandSeparator = CommandSeparator;
 exports.CommandShortcut = CommandShortcut;
+exports.Comment = Comment;
 exports.ContextMenu = ContextMenu;
 exports.ContextMenuCheckboxItem = ContextMenuCheckboxItem;
 exports.ContextMenuContent = ContextMenuContent;
@@ -13192,6 +13534,7 @@ exports.EmptyDescription = EmptyDescription;
 exports.EmptyHeader = EmptyHeader;
 exports.EmptyMedia = EmptyMedia;
 exports.EmptyTitle = EmptyTitle;
+exports.FeedPost = FeedPost;
 exports.Field = Field;
 exports.FieldContent = FieldContent;
 exports.FieldDescription = FieldDescription;
@@ -13271,6 +13614,7 @@ exports.PaginationPrevious = PaginationPrevious;
 exports.Popover = Popover;
 exports.PopoverContent = PopoverContent;
 exports.PopoverTrigger = PopoverTrigger;
+exports.ProfileCard = ProfileCard;
 exports.Progress = Progress;
 exports.RadioGroup = RadioGroup4;
 exports.RadioGroupItem = RadioGroupItem;
@@ -13334,6 +13678,8 @@ exports.SidebarTrigger = SidebarTrigger;
 exports.Skeleton = Skeleton;
 exports.Slider = Slider;
 exports.Spinner = Spinner;
+exports.StatCard = StatCard;
+exports.StatDisplay = StatDisplay;
 exports.Switch = Switch;
 exports.Table = Table;
 exports.TableBody = TableBody;
@@ -13350,6 +13696,7 @@ exports.TabsList = TabsList;
 exports.TabsTrigger = TabsTrigger;
 exports.Textarea = Textarea;
 exports.ThemeProvider = ThemeProvider;
+exports.Timeline = Timeline;
 exports.Toaster = Toaster;
 exports.Toggle = Toggle;
 exports.ToggleGroup = ToggleGroup;

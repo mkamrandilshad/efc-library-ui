@@ -44,6 +44,7 @@ import * as SwitchPrimitives from '@radix-ui/react-switch';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
+import { LucideIcon } from 'lucide-react';
 
 declare function cn(...inputs: ClassValue[]): string;
 
@@ -190,7 +191,7 @@ declare const AvatarImage: React$1.ForwardRefExoticComponent<Omit<AvatarPrimitiv
 declare const AvatarFallback: React$1.ForwardRefExoticComponent<Omit<AvatarPrimitive.AvatarFallbackProps & React$1.RefAttributes<HTMLSpanElement>, "ref"> & React$1.RefAttributes<HTMLSpanElement>>;
 
 declare const badgeVariants: (props?: ({
-    variant?: "secondary" | "destructive" | "default" | "outline" | null | undefined;
+    variant?: "secondary" | "destructive" | "high" | "default" | "outline" | "critical" | "normal" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string;
 interface BadgeProps extends React$1.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
 }
@@ -1014,6 +1015,96 @@ declare const ToggleGroupItem: React$1.ForwardRefExoticComponent<Omit<ToggleGrou
     size?: "default" | "sm" | "lg" | null | undefined;
 } & class_variance_authority_types.ClassProp) | undefined) => string> & React$1.RefAttributes<HTMLButtonElement>>;
 
+interface StatCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    icon?: LucideIcon;
+    value: string | number;
+    title: string;
+    subtitle?: string;
+    variant?: "default" | "positive" | "negative";
+}
+declare const StatCard: React$1.ForwardRefExoticComponent<StatCardProps & React$1.RefAttributes<HTMLDivElement>>;
+
+interface StatDisplayProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    current: string | number;
+    previous?: string | number;
+    label: string;
+    subLabel?: string;
+}
+declare const StatDisplay: React$1.ForwardRefExoticComponent<StatDisplayProps & React$1.RefAttributes<HTMLDivElement>>;
+
+interface AttachmentProps extends React$1.ButtonHTMLAttributes<HTMLButtonElement> {
+    filename: string;
+    variant?: "default" | "outline";
+}
+declare const Attachment: React$1.ForwardRefExoticComponent<AttachmentProps & React$1.RefAttributes<HTMLButtonElement>>;
+
+interface CommentProps extends Omit<React$1.HTMLAttributes<HTMLDivElement>, "content"> {
+    avatar?: string;
+    avatarFallback?: string;
+    name: string;
+    timestamp: string;
+    content: React$1.ReactNode;
+    isNested?: boolean;
+    showActions?: boolean;
+    onAction?: (action: string) => void;
+}
+declare const Comment: React$1.ForwardRefExoticComponent<CommentProps & React$1.RefAttributes<HTMLDivElement>>;
+
+interface FeedPostProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    avatar?: string;
+    avatarFallback?: string;
+    name: string;
+    timestamp: string;
+    reference?: string;
+    content: string;
+    attachment?: {
+        filename: string;
+        onClick?: () => void;
+    };
+    imageUrl?: string;
+    likeCount?: number;
+    isLiked?: boolean;
+    onLike?: () => void;
+    onComment?: (comment: string) => void;
+    showActions?: boolean;
+}
+declare const FeedPost: React$1.ForwardRefExoticComponent<FeedPostProps & React$1.RefAttributes<HTMLDivElement>>;
+
+interface TimelineItemProps {
+    id: string;
+    title: string;
+    startTime: string;
+    endTime: string;
+    capacity?: {
+        current: number;
+        max: number;
+    };
+    color?: string;
+}
+interface TimelineProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    items: TimelineItemProps[];
+    startHour?: number;
+    endHour?: number;
+    hourFormat?: "12h" | "24h";
+}
+declare const Timeline: React$1.ForwardRefExoticComponent<TimelineProps & React$1.RefAttributes<HTMLDivElement>>;
+
+interface ProfileDetail {
+    label: string;
+    value: string;
+}
+interface ProfileCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
+    avatar?: string;
+    avatarFallback?: string;
+    details: ProfileDetail[];
+    actions?: {
+        label: string;
+        onClick: () => void;
+        variant?: "default" | "outline" | "ghost";
+    }[];
+}
+declare const ProfileCard: React$1.ForwardRefExoticComponent<ProfileCardProps & React$1.RefAttributes<HTMLDivElement>>;
+
 interface Template {
     id: string;
     name: string;
@@ -1049,4 +1140,4 @@ interface RichTextEditorProps {
 
 declare const RichTextEditor: React$1.ForwardRefExoticComponent<RichTextEditorProps & React$1.RefAttributes<HTMLDivElement>>;
 
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Avatar, AvatarFallback, AvatarImage, Badge, type BadgeProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, type ButtonProps, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, type ColumnDefinition, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, CustomTable, type CustomTableProps, DatePicker, DatePickerInput, type DatePickerInputProps, type DatePickerProps, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownSorter, type DropdownSorterProps, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, type FileAttachment, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label, LoadingOverlay, type LoadingOverlayProps, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, type MergeField, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, Progress, RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, RichTextEditor, type RichTextEditorProps, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, type SelectMultipleBadgesProps, SelectMultipleContent, type SelectMultipleContentProps, SelectMultipleGroup, type SelectMultipleGroupProps, SelectMultipleItem, type SelectMultipleItemProps, type SelectMultipleProps, SelectMultipleSeparator, type SelectMultipleSeparatorProps, SelectMultipleTrigger, type SelectMultipleTriggerProps, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableHeaderCell, type TableHeaderCellProps, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, type Template, Textarea, type ThemeColors, ThemeProvider, type ThemeProviderProps, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, AlertDialogPortal, AlertDialogTitle, AlertDialogTrigger, AlertTitle, AspectRatio, Attachment, type AttachmentProps, Avatar, AvatarFallback, AvatarImage, Badge, type BadgeProps, Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, Button, ButtonGroup, ButtonGroupSeparator, ButtonGroupText, type ButtonProps, Calendar, CalendarDayButton, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Carousel, type CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent, Checkbox, Collapsible, CollapsibleContent, CollapsibleTrigger, type ColumnDefinition, Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, Comment, type CommentProps, ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuGroup, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger, CustomTable, type CustomTableProps, DatePicker, DatePickerInput, type DatePickerInputProps, type DatePickerProps, Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger, Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger, DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger, DropdownSorter, type DropdownSorterProps, Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle, FeedPost, type FeedPostProps, Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSeparator, FieldSet, FieldTitle, type FileAttachment, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, HoverCard, HoverCardContent, HoverCardTrigger, Input, InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput, InputGroupText, InputGroupTextarea, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, Item, ItemActions, ItemContent, ItemDescription, ItemFooter, ItemGroup, ItemHeader, ItemMedia, ItemSeparator, ItemTitle, Kbd, KbdGroup, Label, LoadingOverlay, type LoadingOverlayProps, Menubar, MenubarCheckboxItem, MenubarContent, MenubarGroup, MenubarItem, MenubarLabel, MenubarMenu, MenubarPortal, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger, type MergeField, NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport, Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, Popover, PopoverContent, PopoverTrigger, ProfileCard, type ProfileCardProps, type ProfileDetail, Progress, RadioGroup, RadioGroupItem, ResizableHandle, ResizablePanel, ResizablePanelGroup, RichTextEditor, type RichTextEditorProps, ScrollArea, ScrollBar, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectMultiple, SelectMultipleBadges, type SelectMultipleBadgesProps, SelectMultipleContent, type SelectMultipleContentProps, SelectMultipleGroup, type SelectMultipleGroupProps, SelectMultipleItem, type SelectMultipleItemProps, type SelectMultipleProps, SelectMultipleSeparator, type SelectMultipleSeparatorProps, SelectMultipleTrigger, type SelectMultipleTriggerProps, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger, SelectValue, Separator, Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetOverlay, SheetPortal, SheetTitle, SheetTrigger, Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, Skeleton, Slider, Spinner, StatCard, type StatCardProps, StatDisplay, type StatDisplayProps, Switch, Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableHeaderCell, type TableHeaderCellProps, TableRow, Tabs, TabsContent, TabsList, TabsTrigger, type Template, Textarea, type ThemeColors, ThemeProvider, type ThemeProviderProps, Timeline, type TimelineItemProps, type TimelineProps, Toaster, Toggle, ToggleGroup, ToggleGroupItem, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, badgeVariants, buttonGroupVariants, buttonVariants, cn, navigationMenuTriggerStyle, toggleVariants, useFormField, useIsMobile, useSidebar };
