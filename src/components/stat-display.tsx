@@ -29,7 +29,7 @@ const StatDisplay = React.forwardRef<HTMLDivElement, StatDisplayProps>(
             </>
           )}
         </div>
-        <div className="text-base font-semibold text-foreground">
+        <div className="text-base font-semibold text-foreground ">
           {label}
         </div>
         {subLabel && (

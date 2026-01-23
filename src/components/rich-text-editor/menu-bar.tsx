@@ -162,7 +162,7 @@ export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
         <Select
           value={currentFontFamily}
           onValueChange={(value) => {
-            editor.chain().focus().setFontFamily(value).run()
+            ;(editor.chain().focus() as any).setFontFamily(value).run()
           }}
         >
           <SelectTrigger className="h-8 w-[120px]">
@@ -181,7 +181,7 @@ export const MenuBar = React.forwardRef<HTMLDivElement, MenuBarProps>(
         <Select
           value={currentFontSize}
           onValueChange={(value) => {
-            editor.chain().focus().setFontSize(value).run()
+            ;(editor.chain().focus() as any).setFontSize(value).run()
           }}
         >
           <SelectTrigger className="h-8 w-[80px]">

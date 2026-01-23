@@ -1016,11 +1016,15 @@ declare const ToggleGroupItem: React$1.ForwardRefExoticComponent<Omit<ToggleGrou
 } & class_variance_authority_types.ClassProp) | undefined) => string> & React$1.RefAttributes<HTMLButtonElement>>;
 
 interface StatCardProps extends React$1.HTMLAttributes<HTMLDivElement> {
-    icon?: LucideIcon;
+    icon?: LucideIcon | React$1.ReactNode;
     value: string | number;
-    title: string;
+    value2?: string | number;
+    title?: string;
     subtitle?: string;
-    variant?: "default" | "positive" | "negative";
+    variant?: "default" | "positive" | "negative" | "warning" | "success";
+    color?: string;
+    valueSize?: "sm" | "md" | "lg" | "xl";
+    asChild?: boolean;
 }
 declare const StatCard: React$1.ForwardRefExoticComponent<StatCardProps & React$1.RefAttributes<HTMLDivElement>>;
 
@@ -1086,6 +1090,7 @@ interface TimelineProps extends React$1.HTMLAttributes<HTMLDivElement> {
     startHour?: number;
     endHour?: number;
     hourFormat?: "12h" | "24h";
+    title?: string;
 }
 declare const Timeline: React$1.ForwardRefExoticComponent<TimelineProps & React$1.RefAttributes<HTMLDivElement>>;
 

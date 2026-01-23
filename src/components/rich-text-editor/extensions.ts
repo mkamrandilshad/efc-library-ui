@@ -49,18 +49,18 @@ const FontFamily = Extension.create({
     return {
       setFontFamily:
         (fontFamily: string) =>
-        ({ chain }: { chain: () => any }) => {
+        ({ chain }: any) => {
           return chain().setMark("textStyle", { fontFamily }).run()
         },
       unsetFontFamily:
         () =>
-        ({ chain }: { chain: () => any }) => {
+        ({ chain }: any) => {
           return chain()
             .setMark("textStyle", { fontFamily: null })
             .removeEmptyTextStyle()
             .run()
         },
-    }
+    } as any
   },
 })
 
@@ -101,18 +101,18 @@ const FontSize = Extension.create({
     return {
       setFontSize:
         (fontSize: string) =>
-        ({ chain }: { chain: () => any }) => {
+        ({ chain }: any) => {
           return chain().setMark("textStyle", { fontSize }).run()
         },
       unsetFontSize:
         () =>
-        ({ chain }: { chain: () => any }) => {
+        ({ chain }: any) => {
           return chain()
             .setMark("textStyle", { fontSize: null })
             .removeEmptyTextStyle()
             .run()
         },
-    }
+    } as any
   },
 })
 
@@ -157,7 +157,7 @@ const ResizableImageExtension = Image.extend({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(ResizableImage)
+    return ReactNodeViewRenderer(ResizableImage as any)
   },
 })
 
@@ -182,10 +182,6 @@ export const extensions = [
     heading: {
       levels: [1, 2, 3],
     },
-    paragraph: true,
-    text: true,
-    bold: true,
-    italic: true,
   }),
   Color,
   TextStyle,

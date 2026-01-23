@@ -4825,14 +4825,51 @@ var ToggleGroupItem = React39__namespace.forwardRef(({ className, children, vari
 });
 ToggleGroupItem.displayName = ToggleGroupPrimitive__namespace.Item.displayName;
 var StatCard = React39__namespace.forwardRef(
-  ({ className, icon: Icon2, value, title, subtitle, variant = "default", ...props }, ref) => {
-    const valueColorClass = variant === "positive" ? "text-green-600" : variant === "negative" ? "text-orange-600" : "text-green-600";
-    return /* @__PURE__ */ jsxRuntime.jsx(Card, { ref, className: cn("", className), ...props, children: /* @__PURE__ */ jsxRuntime.jsx(CardContent, { className: "p-6", children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col space-y-2", children: [
-      Icon2 && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center justify-start mb-2", children: /* @__PURE__ */ jsxRuntime.jsx(Icon2, { className: "h-6 w-6 text-primary" }) }),
-      /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("text-3xl font-bold", valueColorClass), children: value }),
-      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-base font-semibold text-foreground", children: title }),
-      subtitle && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-muted-foreground", children: subtitle })
-    ] }) }) });
+  ({
+    className,
+    icon,
+    value,
+    value2,
+    title,
+    subtitle,
+    variant = "default",
+    color,
+    valueSize = "md",
+    asChild = false,
+    ...props
+  }, ref) => {
+    const Comp = asChild ? reactSlot.Slot : Card;
+    const valueColorClass = color ? color : variant === "positive" || variant === "success" ? "text-green-600" : variant === "negative" || variant === "warning" ? "text-orange-600" : "text-green-600";
+    const valueSizeClass = {
+      sm: "text-2xl",
+      md: "text-3xl",
+      lg: "text-4xl",
+      xl: "text-5xl"
+    }[valueSize];
+    const renderIcon = () => {
+      if (!icon) return null;
+      if (React39__namespace.isValidElement(icon) || typeof icon !== "function") {
+        return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "scale-[1.75] text-primary", children: icon });
+      }
+      const IconComponent = icon;
+      return /* @__PURE__ */ jsxRuntime.jsx("div", { className: "scale-[1.75] text-primary", children: /* @__PURE__ */ jsxRuntime.jsx(IconComponent, { className: "h-6 w-6" }) });
+    };
+    return /* @__PURE__ */ jsxRuntime.jsxs(Comp, { ref, className: cn("", className), ...props, children: [
+      /* @__PURE__ */ jsxRuntime.jsxs(CardHeader, { className: "flex-row gap-6 justify-center items-center px-2", children: [
+        renderIcon(),
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: cn("font-bold", valueSizeClass, valueColorClass), children: [
+          value,
+          value2 !== void 0 && /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
+            " / ",
+            value2
+          ] })
+        ] })
+      ] }),
+      (title || subtitle) && /* @__PURE__ */ jsxRuntime.jsxs(CardContent, { className: "flex flex-col gap-4 justify-center items-center px-2", children: [
+        title && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-center text-base font-semibold text-foreground", children: title }),
+        subtitle && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-center text-sm text-muted-foreground", children: subtitle })
+      ] })
+    ] });
   }
 );
 StatCard.displayName = "StatCard";
@@ -4852,7 +4889,7 @@ var StatDisplay = React39__namespace.forwardRef(
               /* @__PURE__ */ jsxRuntime.jsx("span", { className: "text-3xl font-bold text-muted-foreground", children: previous })
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-base font-semibold text-foreground", children: label }),
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-base font-semibold text-foreground ", children: label }),
           subLabel && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm text-muted-foreground", children: subLabel })
         ]
       }
@@ -5057,70 +5094,87 @@ var Timeline = React39__namespace.forwardRef(
     startHour = 0,
     endHour = 24,
     hourFormat = "12h",
+    title,
     ...props
   }, ref) => {
     const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
+    const totalHours = endHour - startHour;
+    const hourHeight = 80;
     const getItemPosition = (item) => {
       const start = parseTime(item.startTime);
-      const end = parseTime(item.endTime);
-      const duration = end - start;
-      const totalHours = endHour - startHour;
-      const topPercent = (start - startHour) / totalHours * 100;
-      const heightPercent = duration / totalHours * 100;
+      const topPixels = (start - startHour) / totalHours * (totalHours * hourHeight);
       return {
-        top: `${Math.max(0, topPercent)}%`,
-        height: `${Math.min(100, heightPercent)}%`
+        top: `${topPixels}px`,
+        height: "56px"
       };
     };
     return /* @__PURE__ */ jsxRuntime.jsxs(
       "div",
       {
         ref,
-        className: cn("relative flex gap-4", className),
+        className: cn("w-full max-w-4xl mx-auto bg-white", className),
         ...props,
         children: [
-          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex flex-col gap-4 min-w-[80px]", children: hours.map((hour) => /* @__PURE__ */ jsxRuntime.jsx(
-            "div",
-            {
-              className: "text-sm text-muted-foreground",
-              children: formatTime(hour, hourFormat)
-            },
-            hour
-          )) }),
-          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex-1 relative min-h-[400px]", children: items.map((item) => {
-            const position = getItemPosition(item);
-            return /* @__PURE__ */ jsxRuntime.jsx(
+          title && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "px-6 py-4 border-b", children: /* @__PURE__ */ jsxRuntime.jsx("h2", { className: "text-xl font-semibold", children: title }) }),
+          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "relative w-full px-6 py-4", children: [
+            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "relative", children: hours.map((hour) => /* @__PURE__ */ jsxRuntime.jsxs(
               "div",
               {
-                className: cn(
-                  "absolute left-0 right-0 rounded-md p-3 text-white",
-                  "flex flex-col justify-between",
-                  item.color || "bg-primary"
-                ),
+                className: "flex items-center",
                 style: {
-                  top: position.top,
-                  height: position.height,
-                  minHeight: "60px"
+                  height: `${hourHeight}px`
                 },
-                children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start justify-between", children: [
-                  /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1", children: [
-                    /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-semibold text-sm", children: item.title }),
-                    /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs opacity-90 mt-1", children: [
-                      item.startTime,
-                      " - ",
-                      item.endTime
-                    ] })
-                  ] }),
-                  item.capacity && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs font-medium opacity-90 ml-2", children: [
-                    item.capacity.current,
-                    "/",
-                    item.capacity.max
-                  ] })
-                ] })
+                children: [
+                  /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm font-medium text-gray-700 w-24 flex-shrink-0", children: formatTime(hour, hourFormat) }),
+                  /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex-1 border-t border-gray-200 ml-4" })
+                ]
               },
-              item.id
-            );
-          }) })
+              hour
+            )) }),
+            /* @__PURE__ */ jsxRuntime.jsx(
+              "div",
+              {
+                className: "absolute left-0 right-0 top-0 px-6",
+                style: {
+                  minHeight: `${totalHours * hourHeight}px`
+                },
+                children: items.map((item) => {
+                  const position = getItemPosition(item);
+                  return /* @__PURE__ */ jsxRuntime.jsx(
+                    "div",
+                    {
+                      className: cn(
+                        "absolute rounded-lg px-4 py-3 text-white shadow-sm"
+                      ),
+                      style: {
+                        top: position.top,
+                        height: position.height,
+                        left: "120px",
+                        right: "24px",
+                        backgroundColor: item.color || "#a855f7"
+                      },
+                      children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-start justify-between h-full", children: [
+                        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex-1", children: [
+                          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-semibold text-sm leading-tight", children: item.title }),
+                          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs opacity-90 mt-1", children: [
+                            item.startTime,
+                            " - ",
+                            item.endTime
+                          ] })
+                        ] }),
+                        item.capacity && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "text-xs font-medium opacity-90 ml-3 whitespace-nowrap", children: [
+                          item.capacity.current,
+                          "/",
+                          item.capacity.max
+                        ] })
+                      ] })
+                    },
+                    item.id
+                  );
+                })
+              }
+            )
+          ] })
         ]
       }
     );
@@ -5336,7 +5390,7 @@ function findDiffEnd(a, b, posA, posB) {
     posB -= size;
   }
 }
-var Fragment7 = class _Fragment {
+var Fragment8 = class _Fragment {
   /**
   @internal
   */
@@ -5628,7 +5682,7 @@ var Fragment7 = class _Fragment {
     throw new RangeError("Can not convert " + nodes + " to a Fragment" + (nodes.nodesBetween ? " (looks like multiple versions of prosemirror-model were loaded)" : ""));
   }
 };
-Fragment7.empty = new Fragment7([], 0);
+Fragment8.empty = new Fragment8([], 0);
 var found = { index: 0, offset: 0 };
 function retIndex(index, offset) {
   found.index = index;
@@ -5853,7 +5907,7 @@ var Slice = class _Slice {
     let openStart = json.openStart || 0, openEnd = json.openEnd || 0;
     if (typeof openStart != "number" || typeof openEnd != "number")
       throw new RangeError("Invalid input for Slice.fromJSON");
-    return new _Slice(Fragment7.fromJSON(schema, json.content), openStart, openEnd);
+    return new _Slice(Fragment8.fromJSON(schema, json.content), openStart, openEnd);
   }
   /**
   Create a slice from a fragment by taking the maximum possible
@@ -5868,7 +5922,7 @@ var Slice = class _Slice {
     return new _Slice(fragment, openStart, openEnd);
   }
 };
-Slice.empty = new Slice(Fragment7.empty, 0, 0);
+Slice.empty = new Slice(Fragment8.empty, 0, 0);
 function removeRange(content, from, to) {
   let { index, offset } = content.findIndex(from), child = content.maybeChild(index);
   let { index: indexTo, offset: offsetTo } = content.findIndex(to);
@@ -5966,7 +6020,7 @@ function replaceThreeWay($from, $start, $end, $to, depth) {
       addNode(close(openEnd, replaceTwoWay($end, $to, depth + 1)), content);
   }
   addRange($to, null, depth, content);
-  return new Fragment7(content);
+  return new Fragment8(content);
 }
 function replaceTwoWay($from, $to, depth) {
   let content = [];
@@ -5976,13 +6030,13 @@ function replaceTwoWay($from, $to, depth) {
     addNode(close(type, replaceTwoWay($from, $to, depth + 1)), content);
   }
   addRange($to, null, depth, content);
-  return new Fragment7(content);
+  return new Fragment8(content);
 }
 function prepareSliceForReplace(slice, $along) {
   let extra = $along.depth - slice.openStart, parent = $along.node(extra);
   let node = parent.copy(slice.content);
   for (let i = extra - 1; i >= 0; i--)
-    node = $along.node(i).copy(Fragment7.from(node));
+    node = $along.node(i).copy(Fragment8.from(node));
   return {
     start: node.resolveNoCache(slice.openStart + extra),
     end: node.resolveNoCache(node.content.size - slice.openEnd - extra)
@@ -6321,7 +6375,7 @@ var Node = class _Node {
     this.type = type;
     this.attrs = attrs;
     this.marks = marks;
-    this.content = content || Fragment7.empty;
+    this.content = content || Fragment8.empty;
   }
   /**
   The array of this node's child nodes.
@@ -6626,7 +6680,7 @@ var Node = class _Node {
   can optionally pass `start` and `end` indices into the
   replacement fragment.
   */
-  canReplace(from, to, replacement = Fragment7.empty, start = 0, end = replacement.childCount) {
+  canReplace(from, to, replacement = Fragment8.empty, start = 0, end = replacement.childCount) {
     let one = this.contentMatchAt(from).matchFragment(replacement, start, end);
     let two = one && one.matchFragment(this.content, to);
     if (!two || !two.validEnd)
@@ -6708,7 +6762,7 @@ var Node = class _Node {
         throw new RangeError("Invalid text node in JSON");
       return schema.text(json.text, marks);
     }
-    let content = Fragment7.fromJSON(schema, json.content);
+    let content = Fragment8.fromJSON(schema, json.content);
     let node = schema.nodeType(json.type).create(json.attrs, content, marks);
     node.type.checkAttrs(node.attrs);
     return node;
@@ -6850,7 +6904,7 @@ var ContentMatch = class _ContentMatch {
     function search(match, types) {
       let finished = match.matchFragment(after, startIndex);
       if (finished && (!toEnd || finished.validEnd))
-        return Fragment7.from(types.map((tp) => tp.createAndFill()));
+        return Fragment8.from(types.map((tp) => tp.createAndFill()));
       for (let i = 0; i < match.next.length; i++) {
         let { type, next } = match.next[i];
         if (!(type.isText || type.hasRequiredAttrs()) && seen.indexOf(next) == -1) {
@@ -7302,7 +7356,7 @@ var NodeType = class _NodeType {
   create(attrs = null, content, marks) {
     if (this.isText)
       throw new Error("NodeType.create can't construct text nodes");
-    return new Node(this, this.computeAttrs(attrs), Fragment7.from(content), Mark.setFrom(marks));
+    return new Node(this, this.computeAttrs(attrs), Fragment8.from(content), Mark.setFrom(marks));
   }
   /**
   Like [`create`](https://prosemirror.net/docs/ref/#model.NodeType.create), but check the given content
@@ -7310,7 +7364,7 @@ var NodeType = class _NodeType {
   if it doesn't match.
   */
   createChecked(attrs = null, content, marks) {
-    content = Fragment7.from(content);
+    content = Fragment8.from(content);
     this.checkContent(content);
     return new Node(this, this.computeAttrs(attrs), content, Mark.setFrom(marks));
   }
@@ -7324,7 +7378,7 @@ var NodeType = class _NodeType {
   */
   createAndFill(attrs = null, content, marks) {
     attrs = this.computeAttrs(attrs);
-    content = Fragment7.from(content);
+    content = Fragment8.from(content);
     if (content.size) {
       let before = this.contentMatch.fillBefore(content);
       if (!before)
@@ -7332,7 +7386,7 @@ var NodeType = class _NodeType {
       content = before.append(content);
     }
     let matched = this.contentMatch.matchFragment(content);
-    let after = matched && matched.fillBefore(Fragment7.empty, true);
+    let after = matched && matched.fillBefore(Fragment8.empty, true);
     if (!after)
       return null;
     return new Node(this, attrs, content.append(after), Mark.setFrom(marks));
@@ -7796,7 +7850,7 @@ var NodeContext = class {
     if (!this.match) {
       if (!this.type)
         return [];
-      let fill = this.type.contentMatch.fillBefore(Fragment7.from(node));
+      let fill = this.type.contentMatch.fillBefore(Fragment8.from(node));
       if (fill) {
         this.match = this.type.contentMatch.matchFragment(fill);
       } else {
@@ -7822,9 +7876,9 @@ var NodeContext = class {
           this.content[this.content.length - 1] = text.withText(text.text.slice(0, text.text.length - m[0].length));
       }
     }
-    let content = Fragment7.from(this.content);
+    let content = Fragment8.from(this.content);
     if (!openEnd && this.match)
-      content = content.append(this.match.fillBefore(Fragment7.empty, true));
+      content = content.append(this.match.fillBefore(Fragment8.empty, true));
     return this.type ? this.type.create(this.attrs, content, this.marks) : content;
   }
   inlineContext(node) {
@@ -8517,7 +8571,7 @@ function mapFragment(fragment, f, parent) {
       child = f(child, parent, i);
     mapped.push(child);
   }
-  return Fragment7.fromArray(mapped);
+  return Fragment8.fromArray(mapped);
 }
 var AddMarkStep = class _AddMarkStep extends Step {
   /**
@@ -8634,7 +8688,7 @@ var AddNodeMarkStep = class _AddNodeMarkStep extends Step {
     if (!node)
       return StepResult.fail("No node at mark step's position");
     let updated = node.type.create(node.attrs, null, this.mark.addToSet(node.marks));
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment8.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   invert(doc) {
     let node = doc.nodeAt(this.pos);
@@ -8680,7 +8734,7 @@ var RemoveNodeMarkStep = class _RemoveNodeMarkStep extends Step {
     if (!node)
       return StepResult.fail("No node at mark step's position");
     let updated = node.type.create(node.attrs, null, this.mark.removeFromSet(node.marks));
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment8.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   invert(doc) {
     let node = doc.nodeAt(this.pos);
@@ -8997,7 +9051,7 @@ var Fitter = class {
     this.$to = $to;
     this.unplaced = unplaced;
     this.frontier = [];
-    this.placed = Fragment7.empty;
+    this.placed = Fragment8.empty;
     for (let i = 0; i <= $from.depth; i++) {
       let node = $from.node(i);
       this.frontier.push({
@@ -9006,7 +9060,7 @@ var Fitter = class {
       });
     }
     for (let i = $from.depth; i > 0; i--)
-      this.placed = Fragment7.from($from.node(i).copy(this.placed));
+      this.placed = Fragment8.from($from.node(i).copy(this.placed));
   }
   get depth() {
     return this.frontier.length - 1;
@@ -9063,7 +9117,7 @@ var Fitter = class {
         let first2 = fragment.firstChild;
         for (let frontierDepth = this.depth; frontierDepth >= 0; frontierDepth--) {
           let { type, match } = this.frontier[frontierDepth], wrap, inject = null;
-          if (pass == 1 && (first2 ? match.matchType(first2.type) || (inject = match.fillBefore(Fragment7.from(first2), false)) : parent && type.compatibleContent(parent.type)))
+          if (pass == 1 && (first2 ? match.matchType(first2.type) || (inject = match.fillBefore(Fragment8.from(first2), false)) : parent && type.compatibleContent(parent.type)))
             return { sliceDepth, frontierDepth, parent, inject };
           else if (pass == 2 && first2 && (wrap = match.findWrapping(first2.type)))
             return { sliceDepth, frontierDepth, parent, wrap };
@@ -9123,7 +9177,7 @@ var Fitter = class {
     let toEnd = taken == fragment.childCount;
     if (!toEnd)
       openEndCount = -1;
-    this.placed = addToFragment(this.placed, frontierDepth, Fragment7.from(add));
+    this.placed = addToFragment(this.placed, frontierDepth, Fragment8.from(add));
     this.frontier[frontierDepth].match = match;
     if (toEnd && openEndCount < 0 && parent && parent.type == this.frontier[this.depth].type && this.frontier.length > 1)
       this.closeFrontierNode();
@@ -9179,12 +9233,12 @@ var Fitter = class {
   openFrontierNode(type, attrs = null, content) {
     let top = this.frontier[this.depth];
     top.match = top.match.matchType(type);
-    this.placed = addToFragment(this.placed, this.depth, Fragment7.from(type.create(attrs, content)));
+    this.placed = addToFragment(this.placed, this.depth, Fragment8.from(type.create(attrs, content)));
     this.frontier.push({ type, match: type.contentMatch });
   }
   closeFrontierNode() {
     let open = this.frontier.pop();
-    let add = open.match.fillBefore(Fragment7.empty, true);
+    let add = open.match.fillBefore(Fragment8.empty, true);
     if (add.childCount)
       this.placed = addToFragment(this.placed, this.frontier.length, add);
   }
@@ -9213,7 +9267,7 @@ function closeNodeStart(node, openStart, openEnd) {
   if (openStart > 0) {
     frag = node.type.contentMatch.fillBefore(frag).append(frag);
     if (openEnd <= 0)
-      frag = frag.append(node.type.contentMatch.matchFragment(frag).fillBefore(Fragment7.empty, true));
+      frag = frag.append(node.type.contentMatch.matchFragment(frag).fillBefore(Fragment8.empty, true));
   }
   return node.copy(frag);
 }
@@ -9249,7 +9303,7 @@ var AttrStep = class _AttrStep extends Step {
       attrs[name] = node.attrs[name];
     attrs[this.attr] = this.value;
     let updated = node.type.create(attrs, null, node.marks);
-    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment7.from(updated), 0, node.isLeaf ? 0 : 1));
+    return StepResult.fromReplace(doc, this.pos, this.pos + 1, new Slice(Fragment8.from(updated), 0, node.isLeaf ? 0 : 1));
   }
   getMap() {
     return StepMap.empty;
@@ -9633,7 +9687,7 @@ var NodeSelection = class _NodeSelection extends Selection {
     return new _NodeSelection($pos);
   }
   content() {
-    return new Slice(Fragment7.from(this.node), 0, 0);
+    return new Slice(Fragment8.from(this.node), 0, 0);
   }
   eq(other) {
     return other instanceof _NodeSelection && other.anchor == this.anchor;
@@ -10243,10 +10297,10 @@ function deleteBarrier(state, $cut, dispatch, dir) {
   let canDelAfter = !isolated && $cut.parent.canReplace($cut.index(), $cut.index() + 1);
   if (canDelAfter && (conn = (match = before.contentMatchAt(before.childCount)).findWrapping(after.type)) && match.matchType(conn[0] || after.type).validEnd) {
     if (dispatch) {
-      let end = $cut.pos + after.nodeSize, wrap = Fragment7.empty;
+      let end = $cut.pos + after.nodeSize, wrap = Fragment8.empty;
       for (let i = conn.length - 1; i >= 0; i--)
-        wrap = Fragment7.from(conn[i].create(null, wrap));
-      wrap = Fragment7.from(before.copy(wrap));
+        wrap = Fragment8.from(conn[i].create(null, wrap));
+      wrap = Fragment8.from(before.copy(wrap));
       let tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1, end, $cut.pos, end, new Slice(wrap, 1, 0), conn.length, true));
       let $joinAt = tr.doc.resolve(end + 2 * conn.length);
       if ($joinAt.nodeAfter && $joinAt.nodeAfter.type == before.type && canJoin(tr.doc, $joinAt.pos))
@@ -10275,9 +10329,9 @@ function deleteBarrier(state, $cut, dispatch, dir) {
       afterDepth++;
     if (at.canReplace(at.childCount, at.childCount, afterText.content)) {
       if (dispatch) {
-        let end = Fragment7.empty;
+        let end = Fragment8.empty;
         for (let i = wrap.length - 1; i >= 0; i--)
-          end = Fragment7.from(wrap[i].copy(end));
+          end = Fragment8.from(wrap[i].copy(end));
         let tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrap.length, $cut.pos + after.nodeSize, $cut.pos + afterDepth, $cut.pos + after.nodeSize - afterDepth, new Slice(end, wrap.length, 0), 0, true));
         dispatch(tr.scrollIntoView());
       }
@@ -10394,9 +10448,9 @@ function wrapRangeInList(tr, range, listType, attrs = null) {
   return true;
 }
 function doWrapInList(tr, range, wrappers, joinBefore, listType) {
-  let content = Fragment7.empty;
+  let content = Fragment8.empty;
   for (let i = wrappers.length - 1; i >= 0; i--)
-    content = Fragment7.from(wrappers[i].type.create(wrappers[i].attrs, content));
+    content = Fragment8.from(wrappers[i].type.create(wrappers[i].attrs, content));
   tr.step(new ReplaceAroundStep(range.start - (joinBefore ? 2 : 0), range.end, range.start, range.end, new Slice(content, 0, 0), wrappers.length, true));
   let found2 = 0;
   for (let i = 0; i < wrappers.length; i++)
@@ -10430,7 +10484,7 @@ function liftListItem(itemType) {
 function liftToOuterList(state, dispatch, itemType, range) {
   let tr = state.tr, end = range.end, endOfList = range.$to.end(range.depth);
   if (end < endOfList) {
-    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment7.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true));
+    tr.step(new ReplaceAroundStep(end - 1, endOfList, end, endOfList, new Slice(Fragment8.from(itemType.create(null, range.parent.copy())), 1, 0), 1, true));
     range = new NodeRange(tr.doc.resolve(range.$from.pos), tr.doc.resolve(endOfList), range.depth);
   }
   const target = liftTarget(range);
@@ -10454,10 +10508,10 @@ function liftOutOfList(state, dispatch, range) {
     return false;
   let atStart = range.startIndex == 0, atEnd = range.endIndex == list.childCount;
   let parent = $start.node(-1), indexBefore = $start.index(-1);
-  if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1, item.content.append(atEnd ? Fragment7.empty : Fragment7.from(list))))
+  if (!parent.canReplace(indexBefore + (atStart ? 0 : 1), indexBefore + 1, item.content.append(atEnd ? Fragment8.empty : Fragment8.from(list))))
     return false;
   let start = $start.pos, end = start + item.nodeSize;
-  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1, new Slice((atStart ? Fragment7.empty : Fragment7.from(list.copy(Fragment7.empty))).append(atEnd ? Fragment7.empty : Fragment7.from(list.copy(Fragment7.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
+  tr.step(new ReplaceAroundStep(start - (atStart ? 1 : 0), end + (atEnd ? 1 : 0), start + 1, end - 1, new Slice((atStart ? Fragment8.empty : Fragment8.from(list.copy(Fragment8.empty))).append(atEnd ? Fragment8.empty : Fragment8.from(list.copy(Fragment8.empty))), atStart ? 0 : 1, atEnd ? 0 : 1), atStart ? 0 : 1));
   dispatch(tr.scrollIntoView());
   return true;
 }
@@ -10475,8 +10529,8 @@ function sinkListItem(itemType) {
       return false;
     if (dispatch) {
       let nestedBefore = nodeBefore.lastChild && nodeBefore.lastChild.type == parent.type;
-      let inner = Fragment7.from(nestedBefore ? itemType.create() : null);
-      let slice = new Slice(Fragment7.from(itemType.create(null, Fragment7.from(parent.type.create(null, inner)))), nestedBefore ? 3 : 1, 0);
+      let inner = Fragment8.from(nestedBefore ? itemType.create() : null);
+      let slice = new Slice(Fragment8.from(itemType.create(null, Fragment8.from(parent.type.create(null, inner)))), nestedBefore ? 3 : 1, 0);
       let before = range.start, after = range.end;
       dispatch(state.tr.step(new ReplaceAroundStep(before - (nestedBefore ? 3 : 1), after, before, after, slice, 1, true)).scrollIntoView());
     }
@@ -11108,7 +11162,7 @@ function elementFromString(value) {
   return removeWhitespaces(html);
 }
 function createNodeFromContent(content, schema, options) {
-  if (content instanceof Node || content instanceof Fragment7) {
+  if (content instanceof Node || content instanceof Fragment8) {
     return content;
   }
   options = {
@@ -11122,7 +11176,7 @@ function createNodeFromContent(content, schema, options) {
     try {
       const isArrayContent = Array.isArray(content) && content.length > 0;
       if (isArrayContent) {
-        return Fragment7.fromArray(content.map((item) => schema.nodeFromJSON(item)));
+        return Fragment8.fromArray(content.map((item) => schema.nodeFromJSON(item)));
       }
       const node = schema.nodeFromJSON(content);
       if (options.errorOnInvalidContent) {
@@ -11267,7 +11321,7 @@ var insertContentAt = (position, value, options) => ({ tr, dispatch, editor }) =
     if (isOnlyTextContent) {
       if (Array.isArray(value)) {
         newContent = value.map((v) => v.text || "").join("");
-      } else if (value instanceof Fragment7) {
+      } else if (value instanceof Fragment8) {
         let text = "";
         value.forEach((node) => {
           if (node.text) {
@@ -11920,10 +11974,10 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
       return false;
     }
     if (dispatch) {
-      let wrap = Fragment7.empty;
+      let wrap = Fragment8.empty;
       const depthBefore = $from.index(-1) ? 1 : $from.index(-2) ? 2 : 3;
       for (let d = $from.depth - depthBefore; d >= $from.depth - 3; d -= 1) {
-        wrap = Fragment7.from($from.node(d).copy(wrap));
+        wrap = Fragment8.from($from.node(d).copy(wrap));
       }
       const depthAfter = $from.indexAfter(-1) < $from.node(-2).childCount ? 1 : $from.indexAfter(-2) < $from.node(-3).childCount ? 2 : 3;
       const newNextTypeAttributes2 = {
@@ -11931,7 +11985,7 @@ var splitListItem = (typeOrName, overrideAttrs = {}) => ({ tr, state, dispatch, 
         ...overrideAttrs
       };
       const nextType2 = ((_a = type.contentMatch.defaultType) === null || _a === void 0 ? void 0 : _a.createAndFill(newNextTypeAttributes2)) || void 0;
-      wrap = wrap.append(Fragment7.from(type.createAndFill(null, nextType2) || void 0));
+      wrap = wrap.append(Fragment8.from(type.createAndFill(null, nextType2) || void 0));
       const start = $from.before($from.depth - (depthBefore - 1));
       tr.replace(start, $from.after(-depthAfter), new Slice(wrap, 4 - depthBefore, 0));
       let sel = -1;
@@ -12692,10 +12746,9 @@ var ResizableImage = ({ node, updateAttributes: updateAttributes2, selected, get
             onClick: handleImageClick,
             style: {
               maxWidth: "100%",
-              height: "auto",
               display: "block",
               width: typeof width === "number" ? `${width}px` : width,
-              height: typeof height === "number" ? `${height}px` : height,
+              height: typeof height === "number" ? `${height}px` : height === "auto" ? "auto" : height,
               cursor: "pointer",
               borderRadius: isSelected || selected ? "4px" : "0",
               transition: "border-radius 0.2s ease"
@@ -12925,11 +12978,7 @@ var extensions = [
     },
     heading: {
       levels: [1, 2, 3]
-    },
-    paragraph: true,
-    text: true,
-    bold: true,
-    italic: true
+    }
   }),
   extensionColor.Color,
   TextStyle__default.default,

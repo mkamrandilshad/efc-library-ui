@@ -221,10 +221,9 @@ export const ResizableImage = ({ node, updateAttributes, selected, getPos }: Res
         onClick={handleImageClick}
         style={{
           maxWidth: "100%",
-          height: "auto",
           display: "block",
           width: typeof width === "number" ? `${width}px` : width,
-          height: typeof height === "number" ? `${height}px` : height,
+          height: typeof height === "number" ? `${height}px` : height === "auto" ? "auto" : height,
           cursor: "pointer",
           borderRadius: isSelected || selected ? "4px" : "0",
           transition: "border-radius 0.2s ease",
