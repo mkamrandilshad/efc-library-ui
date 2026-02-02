@@ -97,7 +97,7 @@ const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
     })
 
     // Calculate position for each event
-    const getItemPosition = (item: TimelineItemProps, index: number) => {
+    const getItemPosition = (item: TimelineItemProps) => {
       const startHour = Math.floor(parseTime(item.startTime))
       const eventsInSameHour = eventsByHour[startHour] || []
       const indexInHour = eventsInSameHour.indexOf(item)
@@ -110,9 +110,9 @@ const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
       }
     }
 
-    const itemsWithPositions = items.map((item, index) => ({
+    const itemsWithPositions = items.map((item) => ({
       ...item,
-      position: getItemPosition(item, index),
+      position: getItemPosition(item),
     }))
 
     const totalHeight = cumulativeTop

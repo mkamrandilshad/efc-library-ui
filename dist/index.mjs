@@ -5070,7 +5070,7 @@ var Timeline = React39.forwardRef(
       hourTopPositions[hour] = cumulativeTop;
       cumulativeTop += hourHeights[hour];
     });
-    const getItemPosition = (item, index) => {
+    const getItemPosition = (item) => {
       const startHour2 = Math.floor(parseTime(item.startTime));
       const eventsInSameHour = eventsByHour[startHour2] || [];
       const indexInHour = eventsInSameHour.indexOf(item);
@@ -5080,7 +5080,7 @@ var Timeline = React39.forwardRef(
         top: `${topPixels}px`
       };
     };
-    const itemsWithPositions = items.map((item, index) => ({
+    const itemsWithPositions = items.map((item) => ({
       ...item,
       position: getItemPosition(item)
     }));
