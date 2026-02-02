@@ -5018,7 +5018,7 @@ var formatTime = (hour, format2 = "12h") => {
   }
   const period = hour >= 12 ? "PM" : "AM";
   const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  return `${displayHour}:00 ${period}`;
+  return `${displayHour.toString().padStart(2, "0")}:00 ${period}`;
 };
 var parseTime = (timeStr) => {
   const [time, period] = timeStr.split(" ");
@@ -5044,35 +5044,66 @@ var Timeline = React39.forwardRef(
     ...props
   }, ref) => {
     const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
-    const totalHours = endHour - startHour;
-    const hourHeight = 80;
-    const getItemPosition = (item) => {
-      const start = parseTime(item.startTime);
-      const topPixels = (start - startHour) / totalHours * (totalHours * hourHeight);
+    const baseHourHeight = 60;
+    const fixedEventHeight = 56;
+    const eventSpacing = 4;
+    const eventsByHour = {};
+    items.forEach((item) => {
+      const startHour2 = Math.floor(parseTime(item.startTime));
+      if (!eventsByHour[startHour2]) {
+        eventsByHour[startHour2] = [];
+      }
+      eventsByHour[startHour2].push(item);
+    });
+    const hourHeights = {};
+    hours.forEach((hour) => {
+      const eventsInHour = eventsByHour[hour] || [];
+      if (eventsInHour.length > 0) {
+        hourHeights[hour] = eventsInHour.length * (fixedEventHeight + eventSpacing) + eventSpacing;
+      } else {
+        hourHeights[hour] = baseHourHeight;
+      }
+    });
+    let cumulativeTop = 0;
+    const hourTopPositions = {};
+    hours.forEach((hour) => {
+      hourTopPositions[hour] = cumulativeTop;
+      cumulativeTop += hourHeights[hour];
+    });
+    const getItemPosition = (item, index) => {
+      const startHour2 = Math.floor(parseTime(item.startTime));
+      const eventsInSameHour = eventsByHour[startHour2] || [];
+      const indexInHour = eventsInSameHour.indexOf(item);
+      const hourTop = hourTopPositions[startHour2];
+      const topPixels = hourTop + eventSpacing + indexInHour * (fixedEventHeight + eventSpacing);
       return {
-        top: `${topPixels}px`,
-        height: "56px"
+        top: `${topPixels}px`
       };
     };
+    const itemsWithPositions = items.map((item, index) => ({
+      ...item,
+      position: getItemPosition(item)
+    }));
+    const totalHeight = cumulativeTop;
     return /* @__PURE__ */ jsxs(
-      "div",
+      Card,
       {
         ref,
-        className: cn("w-full max-w-4xl mx-auto bg-white", className),
+        className: cn("", className),
         ...props,
         children: [
-          title && /* @__PURE__ */ jsx("div", { className: "px-6 py-4 border-b", children: /* @__PURE__ */ jsx("h2", { className: "text-xl font-semibold", children: title }) }),
-          /* @__PURE__ */ jsxs("div", { className: "relative w-full px-6 py-4", children: [
-            /* @__PURE__ */ jsx("div", { className: "relative", children: hours.map((hour) => /* @__PURE__ */ jsxs(
+          title && /* @__PURE__ */ jsx("div", { className: "px-6 py-4  ", children: /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold ", children: title }) }),
+          /* @__PURE__ */ jsxs("div", { className: "relative w-full px-8 py-6", children: [
+            /* @__PURE__ */ jsx("div", { className: "relative", children: hours.map((hour, index) => /* @__PURE__ */ jsxs(
               "div",
               {
-                className: "flex items-center",
+                className: "flex items-start",
                 style: {
-                  height: `${hourHeight}px`
+                  height: index === hours.length - 1 ? "0px" : `${hourHeights[hour]}px`
                 },
                 children: [
-                  /* @__PURE__ */ jsx("div", { className: "text-sm font-medium text-gray-700 w-24 flex-shrink-0", children: formatTime(hour, hourFormat) }),
-                  /* @__PURE__ */ jsx("div", { className: "flex-1 border-t border-gray-200 ml-4" })
+                  /* @__PURE__ */ jsx("div", { className: "text-sm font-normal text-foreground w-20 flex-shrink-0 -mt-2", children: formatTime(hour, hourFormat) }),
+                  /* @__PURE__ */ jsx(Separator, { className: "flex-1" })
                 ]
               },
               hour
@@ -5080,35 +5111,35 @@ var Timeline = React39.forwardRef(
             /* @__PURE__ */ jsx(
               "div",
               {
-                className: "absolute left-0 right-0 top-0 px-6",
+                className: "absolute left-6 right-6 top-6",
                 style: {
-                  minHeight: `${totalHours * hourHeight}px`
+                  minHeight: `${totalHeight}px`
                 },
-                children: items.map((item) => {
-                  const position = getItemPosition(item);
+                children: itemsWithPositions.map((item) => {
+                  const { position } = item;
                   return /* @__PURE__ */ jsx(
                     "div",
                     {
                       className: cn(
-                        "absolute rounded-lg px-4 py-3 text-white shadow-sm"
+                        "absolute rounded-md px-4 py-2.5 text-white shadow-sm "
                       ),
                       style: {
                         top: position.top,
-                        height: position.height,
-                        left: "120px",
-                        right: "24px",
-                        backgroundColor: item.color || "#a855f7"
+                        height: `${fixedEventHeight}px`,
+                        left: "88px",
+                        right: "0px",
+                        backgroundColor: item.color || "#7c3aed"
                       },
                       children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between h-full", children: [
-                        /* @__PURE__ */ jsxs("div", { className: "flex-1", children: [
-                          /* @__PURE__ */ jsx("div", { className: "font-semibold text-sm leading-tight", children: item.title }),
-                          /* @__PURE__ */ jsxs("div", { className: "text-xs opacity-90 mt-1", children: [
+                        /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
+                          /* @__PURE__ */ jsx("div", { className: "font-semibold text-sm leading-tight truncate", children: item.title }),
+                          /* @__PURE__ */ jsxs("div", { className: "text-xs opacity-90 mt-0.5", children: [
                             item.startTime,
                             " - ",
                             item.endTime
                           ] })
                         ] }),
-                        item.capacity && /* @__PURE__ */ jsxs("div", { className: "text-xs font-medium opacity-90 ml-3 whitespace-nowrap", children: [
+                        item.capacity && /* @__PURE__ */ jsxs("div", { className: "text-xs font-medium opacity-90 ml-3 whitespace-nowrap self-end", children: [
                           item.capacity.current,
                           "/",
                           item.capacity.max
