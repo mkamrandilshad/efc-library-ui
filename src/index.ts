@@ -515,11 +515,11 @@ export type { AttachmentProps } from "./components/attachment";
 
 // Comment
 export { Comment } from "./components/comment";
-export type { CommentProps } from "./components/comment";
+export type { CommentProps, CommentMenuItem } from "./components/comment";
 
 // Feed Post
 export { FeedPost } from "./components/feed-post";
-export type { FeedPostProps } from "./components/feed-post";
+export type { FeedPostProps, ActionButton, MenuItem, FeedPostComment } from "./components/feed-post";
 
 // Timeline
 export { Timeline } from "./components/timeline";
