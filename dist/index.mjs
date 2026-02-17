@@ -5179,14 +5179,6 @@ var FeedPost = React39.forwardRef(
   }
 );
 FeedPost.displayName = "FeedPost";
-var formatTime = (hour, format2 = "12h") => {
-  if (format2 === "24h") {
-    return `${hour.toString().padStart(2, "0")}:00`;
-  }
-  const period = hour >= 12 ? "PM" : "AM";
-  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  return `${displayHour.toString().padStart(2, "0")}:00 ${period}`;
-};
 var parseTime = (timeStr) => {
   const [time, period] = timeStr.split(" ");
   const [hours, minutes] = time.split(":").map(Number);
@@ -5200,6 +5192,58 @@ var parseTime = (timeStr) => {
   }
   return hour24 + minutes / 60;
 };
+var groupEventsByTimeSlot = (items, timeSlotDuration, startHour) => {
+  const sortedItems = [...items].sort((a, b) => parseTime(a.startTime) - parseTime(b.startTime));
+  const timeSlots = {};
+  for (const item of sortedItems) {
+    const startMinutes = parseTime(item.startTime) * 60;
+    const startHourMinutes = startHour * 60;
+    const adjustedMinutes = startMinutes - startHourMinutes;
+    const timeSlotIndex = Math.floor(adjustedMinutes / timeSlotDuration);
+    if (!timeSlots[timeSlotIndex]) {
+      timeSlots[timeSlotIndex] = [];
+    }
+    timeSlots[timeSlotIndex].push(item);
+  }
+  return timeSlots;
+};
+var getCumulativeHeight = (slotIndex, slotHeights) => {
+  let totalHeight = 0;
+  for (let i = 0; i < slotIndex; i++) {
+    if (slotHeights[i]) {
+      totalHeight += slotHeights[i];
+    }
+  }
+  return totalHeight;
+};
+var flattenTimeSlots = (timeSlots) => {
+  const itemsWithSlots = [];
+  Object.keys(timeSlots).sort((a, b) => Number(a) - Number(b)).forEach((slotKey) => {
+    const slotIndex = Number(slotKey);
+    timeSlots[slotIndex].forEach((item, index) => {
+      itemsWithSlots.push({
+        ...item,
+        timeSlot: slotIndex,
+        slotIndex: index
+      });
+    });
+  });
+  return itemsWithSlots;
+};
+var calculateSlotHeights = (timeSlots, timeSlotDuration, eventHeight, eventGap, startHour, endHour, minSlotHeight) => {
+  const slotHeights = {};
+  const totalSlots = (endHour - startHour + 1) * 60 / timeSlotDuration;
+  for (let slotIndex = 0; slotIndex < totalSlots; slotIndex++) {
+    const eventsInSlot = timeSlots[slotIndex] || [];
+    if (eventsInSlot.length > 0) {
+      const requiredHeight = eventsInSlot.length * eventHeight + (eventsInSlot.length - 1) * eventGap;
+      slotHeights[slotIndex] = requiredHeight;
+    } else {
+      slotHeights[slotIndex] = minSlotHeight;
+    }
+  }
+  return slotHeights;
+};
 var Timeline = React39.forwardRef(
   ({
     className,
@@ -5208,50 +5252,46 @@ var Timeline = React39.forwardRef(
     endHour = 24,
     hourFormat = "12h",
     title,
+    timeSlotDuration = 30,
+    // Default 30 minutes
+    eventGap = 4,
+    // Default 4 pixels gap between events
+    minSlotHeight = 80,
+    // Default 80 pixels minimum slot height
+    maxSlotHeight,
     ...props
   }, ref) => {
-    const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i);
-    const baseHourHeight = 60;
-    const fixedEventHeight = 56;
-    const eventSpacing = 4;
-    const eventsByHour = {};
-    items.forEach((item) => {
-      const startHour2 = Math.floor(parseTime(item.startTime));
-      if (!eventsByHour[startHour2]) {
-        eventsByHour[startHour2] = [];
-      }
-      eventsByHour[startHour2].push(item);
-    });
-    const hourHeights = {};
-    hours.forEach((hour) => {
-      const eventsInHour = eventsByHour[hour] || [];
-      if (eventsInHour.length > 0) {
-        hourHeights[hour] = eventsInHour.length * (fixedEventHeight + eventSpacing) + eventSpacing;
-      } else {
-        hourHeights[hour] = baseHourHeight;
-      }
-    });
-    let cumulativeTop = 0;
-    const hourTopPositions = {};
-    hours.forEach((hour) => {
-      hourTopPositions[hour] = cumulativeTop;
-      cumulativeTop += hourHeights[hour];
-    });
+    const fixedEventHeight = 60;
+    const timeSlots = groupEventsByTimeSlot(items, timeSlotDuration, startHour);
+    const slotHeights = calculateSlotHeights(
+      timeSlots,
+      timeSlotDuration,
+      fixedEventHeight,
+      eventGap,
+      startHour,
+      endHour,
+      minSlotHeight
+    );
+    const itemsWithSlots = flattenTimeSlots(timeSlots);
     const getItemPosition = (item) => {
-      const startHour2 = Math.floor(parseTime(item.startTime));
-      const eventsInSameHour = eventsByHour[startHour2] || [];
-      const indexInHour = eventsInSameHour.indexOf(item);
-      const hourTop = hourTopPositions[startHour2];
-      const topPixels = hourTop + eventSpacing + indexInHour * (fixedEventHeight + eventSpacing);
+      const slotIndex = item.timeSlot || 0;
+      const eventIndex = item.slotIndex || 0;
+      const cumulativeHeight = getCumulativeHeight(slotIndex, slotHeights);
+      const topPixels = cumulativeHeight + 38;
+      const verticalOffset = eventIndex * (fixedEventHeight + eventGap);
       return {
-        top: `${topPixels}px`
+        top: `${topPixels + verticalOffset}px`,
+        height: `${fixedEventHeight}px`,
+        left: "3%",
+        // Fixed left position for full width
+        width: "94%"
+        // Full width for all events
       };
     };
-    const itemsWithPositions = items.map((item) => ({
+    const itemsWithPositions = itemsWithSlots.map((item) => ({
       ...item,
       position: getItemPosition(item)
     }));
-    const totalHeight = cumulativeTop;
     return /* @__PURE__ */ jsxs(
       Card,
       {
@@ -5261,63 +5301,58 @@ var Timeline = React39.forwardRef(
         children: [
           title && /* @__PURE__ */ jsx("div", { className: "px-6 py-4  ", children: /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold ", children: title }) }),
           /* @__PURE__ */ jsxs("div", { className: "relative w-full px-8 py-6", children: [
-            /* @__PURE__ */ jsx("div", { className: "relative", children: hours.map((hour, index) => /* @__PURE__ */ jsxs(
-              "div",
-              {
-                className: "flex items-start",
-                style: {
-                  height: index === hours.length - 1 ? "0px" : `${hourHeights[hour]}px`
+            /* @__PURE__ */ jsx("div", { className: "relative", children: Array.from({ length: (endHour - startHour + 1) * 60 / timeSlotDuration }).map((_, slotIndex) => {
+              const slotHeight = slotHeights[slotIndex] || minSlotHeight;
+              const slotStartTimeInMinutes = slotIndex * timeSlotDuration + startHour * 60;
+              const displayHour = Math.floor(slotStartTimeInMinutes / 60);
+              const displayMinute = slotStartTimeInMinutes % 60;
+              const period = displayHour >= 12 ? "PM" : "AM";
+              const hour12 = displayHour > 12 ? displayHour - 12 : displayHour === 0 ? 12 : displayHour;
+              const timeLabel = `${hour12.toString().padStart(2, "0")}:${displayMinute.toString().padStart(2, "0")} ${period}`;
+              return /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: "flex items-start relative",
+                  style: {
+                    height: `${slotHeight}px`
+                  },
+                  children: /* @__PURE__ */ jsx("div", { className: "text-sm font-normal text-foreground w-20 flex-shrink-0 -mt-2", children: timeLabel })
                 },
-                children: [
-                  /* @__PURE__ */ jsx("div", { className: "text-sm font-normal text-foreground w-20 flex-shrink-0 -mt-2", children: formatTime(hour, hourFormat) }),
-                  /* @__PURE__ */ jsx(Separator, { className: "flex-1" })
-                ]
-              },
-              hour
-            )) }),
-            /* @__PURE__ */ jsx(
-              "div",
-              {
-                className: "absolute left-6 right-6 top-6",
-                style: {
-                  minHeight: `${totalHeight}px`
+                slotIndex
+              );
+            }) }),
+            /* @__PURE__ */ jsx("div", { className: "absolute inset-0", children: itemsWithPositions.map((item) => {
+              const { position } = item;
+              return /* @__PURE__ */ jsx(
+                "div",
+                {
+                  className: cn(
+                    "rounded-lg p-2 shadow-sm border-0 absolute"
+                  ),
+                  style: {
+                    top: position.top,
+                    height: position.height,
+                    backgroundColor: item.color || "#7c3aed",
+                    left: position.left,
+                    width: position.width
+                  },
+                  children: /* @__PURE__ */ jsxs("div", { className: "flex flex-col justify-center", children: [
+                    /* @__PURE__ */ jsx("span", { className: "font-semibold text-sm leading-tight truncate", style: { color: item.textColor || "#ffffff" }, children: item.title }),
+                    /* @__PURE__ */ jsxs("span", { className: "text-xs opacity-75", style: { color: item.textColor || "#ffffff" }, children: [
+                      item.startTime,
+                      " - ",
+                      item.endTime
+                    ] }),
+                    item.capacity && /* @__PURE__ */ jsxs("span", { className: "text-xs font-medium opacity-90 self-end", style: { color: item.textColor || "#ffffff" }, children: [
+                      item.capacity.current,
+                      "/",
+                      item.capacity.max
+                    ] })
+                  ] })
                 },
-                children: itemsWithPositions.map((item) => {
-                  const { position } = item;
-                  return /* @__PURE__ */ jsx(
-                    "div",
-                    {
-                      className: cn(
-                        "absolute rounded-md px-4 py-2.5 text-white shadow-sm "
-                      ),
-                      style: {
-                        top: position.top,
-                        height: `${fixedEventHeight}px`,
-                        left: "88px",
-                        right: "0px",
-                        backgroundColor: item.color || "#7c3aed"
-                      },
-                      children: /* @__PURE__ */ jsxs("div", { className: "flex items-start justify-between h-full", children: [
-                        /* @__PURE__ */ jsxs("div", { className: "flex-1 min-w-0", children: [
-                          /* @__PURE__ */ jsx("div", { className: "font-semibold text-sm leading-tight truncate", children: item.title }),
-                          /* @__PURE__ */ jsxs("div", { className: "text-xs opacity-90 mt-0.5", children: [
-                            item.startTime,
-                            " - ",
-                            item.endTime
-                          ] })
-                        ] }),
-                        item.capacity && /* @__PURE__ */ jsxs("div", { className: "text-xs font-medium opacity-90 ml-3 whitespace-nowrap self-end", children: [
-                          item.capacity.current,
-                          "/",
-                          item.capacity.max
-                        ] })
-                      ] })
-                    },
-                    item.id
-                  );
-                })
-              }
-            )
+                item.id
+              );
+            }) })
           ] })
         ]
       }

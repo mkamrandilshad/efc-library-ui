@@ -1152,6 +1152,9 @@ interface TimelineItemProps {
         max: number;
     };
     color?: string;
+    textColor?: string;
+    timeSlot?: number;
+    slotIndex?: number;
 }
 interface TimelineProps extends React$1.HTMLAttributes<HTMLDivElement> {
     items: TimelineItemProps[];
@@ -1159,6 +1162,10 @@ interface TimelineProps extends React$1.HTMLAttributes<HTMLDivElement> {
     endHour?: number;
     hourFormat?: "12h" | "24h";
     title?: string;
+    timeSlotDuration?: number;
+    eventGap?: number;
+    minSlotHeight?: number;
+    maxSlotHeight?: number;
 }
 declare const Timeline: React$1.ForwardRefExoticComponent<TimelineProps & React$1.RefAttributes<HTMLDivElement>>;
 
