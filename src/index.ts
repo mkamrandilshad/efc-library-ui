@@ -83,6 +83,8 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
+  CardRow,
+  CardCreator,
 } from "./components/card";
 
 // Carousel
@@ -482,7 +484,7 @@ export {
 } from "./components/custom-table";
 
 // Tabs
-export { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/tabs";
+export { Tabs } from "./components/tabs";
 
 // Textarea
 export { Textarea } from "./components/textarea";
@@ -523,7 +525,7 @@ export type { FeedPostProps, ActionButton, MenuItem, FeedPostComment } from "./c
 
 // Timeline
 export { Timeline } from "./components/timeline";
-export type { TimelineProps, TimelineItemProps } from "./components/timeline";
+export type { TimelineProps, TimelineItem } from "./components/timeline";
 
 // Profile Card
 export { ProfileCard } from "./components/profile-card";

@@ -1,286 +1,237 @@
 
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
-import { Card } from "./card"
-// import { Separator } from "./separator"
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "./card";
 
-interface TimelineItemProps {
-  id: string
-  title: string
-  startTime: string
-  endTime: string
-  capacity?: {
-    current: number
-    max: number
-  }
-  color?: string
-  textColor?: string
-  timeSlot?: number
-  slotIndex?: number
+// Generic interfaces for timeline items
+export interface TimelineItem {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  type: "appointment" | "session" | "reminder";
+  // Optional properties for different item types
+  date?: string;
+  capacity?: number;
+  bookings?: number;
+  member?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  // Custom styling
+  color?: string;
+  onClick?: () => void;
 }
 
 export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
-  items: TimelineItemProps[]
-  startHour?: number
-  endHour?: number
-  hourFormat?: "12h" | "24h"
-  title?: string
-  timeSlotDuration?: number // Duration in minutes (default: 30)
-  eventGap?: number // Gap between stacked events in pixels (default: 4)
-  minSlotHeight?: number // Minimum height for any slot (default: 80)
-  maxSlotHeight?: number // Maximum height for any slot (optional)
+  items?: TimelineItem[];
+  loading?: boolean;
+  title?: string;
+  emptyMessage?: string;
+  // Color customization
+  sessionColor?: string;
+  appointmentColor?: string;
+  reminderColor?: string;
+  textColor?: string;
+  // Custom components
+  skeletonComponent?: React.ComponentType<{ height?: number; className?: string }>;
+  emptyComponent?: React.ComponentType<{ label: string }>;
+  // Callbacks for navigation
+  onSessionClick?: (date: string, sessionId: string) => void;
+  onMemberClick?: (memberId: string) => void;
 }
 
-const parseTime = (timeStr: string): number => {
-  const [time, period] = timeStr.split(" ")
-  const [hours, minutes] = time.split(":").map(Number)
-  let hour24 = hours
+// Helper function to format time (simplified version of date-fns functionality)
+const formatTime = (time: string): string => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+  return `${displayHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
+
+// Helper function to convert time string (HH:mm:ss) to minutes since midnight
+const getTimeValue = (time: string): number => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+// Helper function to get the start and end times for a time slot
+const getSlotRange = (slot: string): [number, number] => {
+  const [time, period] = slot.split(" ");
+  const [hours, minutes] = time.split(":").map(Number);
+  let hour24 = hours;
   if (period) {
     if (period.toUpperCase() === "PM" && hours !== 12) {
-      hour24 = hours + 12
+      hour24 = hours + 12;
     } else if (period.toUpperCase() === "AM" && hours === 12) {
-      hour24 = 0
+      hour24 = 0;
     }
   }
-  return hour24 + minutes / 60
-}
+  const slotStart = hour24 * 60 + (minutes || 0);
+  const slotEnd = slotStart + 60; // Assuming 1-hour slots
+  return [slotStart, slotEnd];
+};
 
-// Group events by time slots for vertical stacking
-const groupEventsByTimeSlot = (items: TimelineItemProps[], timeSlotDuration: number, startHour: number): { [key: number]: TimelineItemProps[] } => {
-  const sortedItems = [...items].sort((a, b) => parseTime(a.startTime) - parseTime(b.startTime))
-  const timeSlots: { [key: number]: TimelineItemProps[] } = {}
-  
-  for (const item of sortedItems) {
-    const startMinutes = parseTime(item.startTime) * 60
-    const startHourMinutes = startHour * 60
-    const adjustedMinutes = startMinutes - startHourMinutes
-    const timeSlotIndex = Math.floor(adjustedMinutes / timeSlotDuration)
-    
-    if (!timeSlots[timeSlotIndex]) {
-      timeSlots[timeSlotIndex] = []
-    }
-    
-    timeSlots[timeSlotIndex].push(item)
+// Helper function to generate time slots
+const generateTimeSlots = (items: TimelineItem[]): string[] => {
+  if (items.length === 0) return ["12:00 AM"]; // Default slot if no items
+
+  const allStartTimes = items.map(item => item.startTime);
+  const earliestStartTime = allStartTimes.reduce((earliest, current) => 
+    current < earliest ? current : earliest, "23:59:59");
+  const latestStartTime = allStartTimes.reduce((latest, current) => 
+    current > latest ? current : latest, "00:00:00");
+
+  const earliestHour = parseInt(earliestStartTime.split(":")[0]);
+  const latestHour = parseInt(latestStartTime.split(":")[0]);
+
+  const timeSlots = [];
+  for (let hour = earliestHour; hour <= latestHour + 1; hour++) {
+    const period = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    timeSlots.push(`${displayHour.toString().padStart(2, "0")}:00 ${period}`);
   }
-  
-  return timeSlots
-}
+  return timeSlots;
+};
 
-// Get cumulative height up to a specific slot for positioning
-const getCumulativeHeight = (slotIndex: number, slotHeights: { [key: number]: number }): number => {
-  let totalHeight = 0
+// Group events by time slots
+const groupByTime = (items: TimelineItem[], timeSlots: string[]): { [key: string]: TimelineItem[] } => {
+  const grouped: { [key: string]: TimelineItem[] } = {};
   
-  // Sum heights of all slots before this one
-  for (let i = 0; i < slotIndex; i++) {
-    if (slotHeights[i]) {
-      totalHeight += slotHeights[i]
-    }
-  }
-  
-  return totalHeight
-}
+  timeSlots.forEach((slot) => {
+    const [startSlot, endSlot] = getSlotRange(slot);
+    grouped[slot] = [];
 
-// Flatten time slots back to items with slot information
-const flattenTimeSlots = (
-  timeSlots: { [key: number]: TimelineItemProps[] }
-): TimelineItemProps[] => {
-  const itemsWithSlots: TimelineItemProps[] = []
-  Object.keys(timeSlots).sort((a, b) => Number(a) - Number(b)).forEach(slotKey => {
-    const slotIndex = Number(slotKey)
-    timeSlots[slotIndex].forEach((item, index) => {
-      itemsWithSlots.push({ 
-        ...item, 
-        timeSlot: slotIndex,
-        slotIndex: index 
-      })
-    })
-  })
-  
-  return itemsWithSlots
-}
-
-// Calculate required height for each time slot based on event count
-const calculateSlotHeights = (
-  timeSlots: { [key: number]: TimelineItemProps[] },
-  timeSlotDuration: number,
-  eventHeight: number,
-  eventGap: number,
-  startHour: number,
-  endHour: number,
-  minSlotHeight: number
-): { [key: number]: number } => {
-  const slotHeights: { [key: number]: number } = {}
-  
-  // Calculate total number of slots in the timeline
-  const totalSlots = ((endHour - startHour + 1) * 60) / timeSlotDuration
-  
-  // Calculate height for each slot
-  for (let slotIndex = 0; slotIndex < totalSlots; slotIndex++) {
-    const eventsInSlot = timeSlots[slotIndex] || []
-    
-    if (eventsInSlot.length > 0) {
-      // Calculate required height: (eventCount * eventHeight) + ((eventCount - 1) * eventGap)
-      const requiredHeight = (eventsInSlot.length * eventHeight) + ((eventsInSlot.length - 1) * eventGap)
-      slotHeights[slotIndex] = requiredHeight
-    } else {
-      slotHeights[slotIndex] = minSlotHeight
-    }
-  }
-  
-  return slotHeights
-}
+    items.forEach((item) => {
+      const eventStartTime = getTimeValue(item.startTime);
+      if (eventStartTime >= startSlot && eventStartTime < endSlot) {
+        grouped[slot].push(item);
+      }
+    });
+  });
+  return grouped;
+};
 
 const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
   (
     {
       className,
-      items,
-      startHour = 0,
-      endHour = 24,
-      hourFormat = "12h",
-      title,
-      timeSlotDuration = 30, // Default 30 minutes
-      eventGap = 4, // Default 4 pixels gap between events
-      minSlotHeight = 80, // Default 80 pixels minimum slot height
-      maxSlotHeight,
+      items = [],
+      loading = false,
+      title = "Agenda",
+      emptyMessage = "There is nothing on the Agenda today",
+      sessionColor,
+      appointmentColor,
+      reminderColor = "#9b76a0",
+      textColor = "#ffffff",
+      skeletonComponent: Skeleton,
+      emptyComponent: EmptyComponent,
+      onSessionClick,
+      onMemberClick,
       ...props
     },
     ref
   ) => {
-    const fixedEventHeight = 60
-    
-    // Group events by time slots
-    const timeSlots = groupEventsByTimeSlot(items, timeSlotDuration, startHour)
-    
-    // Calculate dynamic heights for each slot
-    const slotHeights = calculateSlotHeights(
-      timeSlots,
-      timeSlotDuration,
-      fixedEventHeight,
-      eventGap,
-      startHour,
-      endHour,
-      minSlotHeight
-    )
-    
-    // Flatten time slots back to items with slot information
-    const itemsWithSlots = flattenTimeSlots(timeSlots)
-    
-    // Calculate position for each event - considering time slot and vertical stacking
-    const getItemPosition = (item: TimelineItemProps) => {
-      const slotIndex = item.timeSlot || 0
-      const eventIndex = item.slotIndex || 0
-      
-      // Calculate cumulative height up to this time slot
-      const cumulativeHeight = getCumulativeHeight(slotIndex, slotHeights)
-      
-      // Calculate top position relative to start of timeline
-      // Add 38px to align with separator lines (accounting for hour label height)
-      const topPixels = cumulativeHeight + 38
-      
-      // Add vertical offset for stacked events within same time slot
-      const verticalOffset = eventIndex * (fixedEventHeight + eventGap)
-      
-      return {
-        top: `${topPixels + verticalOffset}px`,
-        height: `${fixedEventHeight}px`,
-        left: "3%", // Fixed left position for full width
-        width: "94%" // Full width for all events
+    const fixedTimeSlots = generateTimeSlots(items);
+    const groupedEvents = groupByTime(items, fixedTimeSlots);
+
+    const getEventBgColor = (event: TimelineItem): { backgroundColor: string } => {
+      if (event.type === "session") {
+        return { backgroundColor: sessionColor || "#76a09b" };
+      } else if (event.type === "appointment") {
+        return { backgroundColor: appointmentColor || "#7c3aed" };
+      } else {
+        return { backgroundColor: reminderColor };
       }
-    }
+    };
 
-    const itemsWithPositions = itemsWithSlots.map((item: TimelineItemProps) => ({
-      ...item,
-      position: getItemPosition(item),
-    }))
+    const handleEventClick = (event: TimelineItem) => {
+      if (event.onClick) {
+        event.onClick();
+      } else if (event.type === "session" && event.date && onSessionClick) {
+        onSessionClick(event.date, event.id);
+      } else if (event.type === "appointment" && event.member && onMemberClick) {
+        onMemberClick(event.member.id);
+      }
+    };
 
-    // const totalHeight = (endHour - startHour) * hourHeight
+    const DefaultSkeleton = Skeleton || (({ height = 50, className }: { height?: number; className?: string }) => (
+      <div className={cn("bg-gray-200 rounded animate-pulse", className)} style={{ height }} />
+    ));
+
+    const DefaultEmpty = EmptyComponent || (({ label }: { label: string }) => (
+      <div className="text-center text-muted-foreground py-8">{label}</div>
+    ));
+
+    const noData = !loading && items.length === 0;
 
     return (
-      <Card
-        ref={ref}
-        className={cn("", className)} 
-        {...props}
-      >
-        {title && (
-          <div className="px-6 py-4  ">
-            <h2 className="text-lg font-semibold ">{title}</h2>
-          </div>
-        )}
-        <div className="relative w-full px-8 py-6">
-          {/* Time Labels and Slots - Direct Slot Rendering */}
-          <div className="relative">
-            {Array.from({ length: ((endHour - startHour + 1) * 60) / timeSlotDuration }).map((_, slotIndex) => {
-              const slotHeight = slotHeights[slotIndex] || minSlotHeight
-              
-              // Calculate the actual time for this slot
-              const slotStartTimeInMinutes = slotIndex * timeSlotDuration + startHour * 60
-              const displayHour = Math.floor(slotStartTimeInMinutes / 60)
-              const displayMinute = slotStartTimeInMinutes % 60
-              const period = displayHour >= 12 ? "PM" : "AM"
-              const hour12 = displayHour > 12 ? displayHour - 12 : displayHour === 0 ? 12 : displayHour
-              const timeLabel = `${hour12.toString().padStart(2, "0")}:${displayMinute.toString().padStart(2, "0")} ${period}`
-              
-              return (
-                <div
-                  key={slotIndex}
-                  className="flex items-start relative"
-                  style={{
-                    height: `${slotHeight}px`,
-                  }}
-                >
-                  {/* Time Label */}
-                  <div className="text-sm font-normal text-foreground w-20 flex-shrink-0 -mt-2">
-                    {timeLabel}
-                  </div>
-                  
-                  {/* Events will be positioned absolutely over this */}
+      <Card className={cn("lg:w-1/2 max-lg:w-full", className)} ref={ref} {...props}>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {noData ? (
+            <DefaultEmpty label={emptyMessage} />
+          ) : (
+            fixedTimeSlots.map((timeSlot, index) => (
+              <div key={index} className="pl-1 mb-4 w-full">
+                <div className="flex items-center w-full">
+                  <div className="text-secondary-foreground w-24">{timeSlot}</div>
+                  <div className="my-2 border-t border-border-color w-5/6"></div>
                 </div>
-              )
-            })}
-          </div>
-          
-          {/* Events Container - Positioned absolutely over the timeline */}
-          <div className="absolute inset-0">
-            {itemsWithPositions.map((item) => {
-              const { position } = item
-              return (
-                <div
-                  key={item.id}
-                  className={cn(
-                    "rounded-lg p-2 shadow-sm border-0 absolute"
-                  )}
-                  style={{
-                    top: position.top,
-                    height: position.height,
-                    backgroundColor: item.color || "#7c3aed",
-                    left: position.left,
-                    width: position.width
-                  }}
-                >
-                  <div className="flex flex-col justify-center">
-                    <span className="font-semibold text-sm leading-tight truncate" style={{ color: item.textColor || '#ffffff' }}>
-                      {item.title}
-                    </span>
-                    <span className="text-xs opacity-75" style={{ color: item.textColor || '#ffffff' }}>
-                      {item.startTime} - {item.endTime}
-                    </span>
-                    {item.capacity && (
-                      <span className="text-xs font-medium opacity-90 self-end" style={{ color: item.textColor || '#ffffff' }}>
-                        {item.capacity.current}/{item.capacity.max}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </Card>
-    )
-  }
-)
-Timeline.displayName = "Timeline"
 
-export { Timeline, type TimelineItemProps }
+                {loading ? (
+                  <DefaultSkeleton height={50} />
+                ) : (
+                  <div>
+                    {groupedEvents[timeSlot] &&
+                      groupedEvents[timeSlot].length > 0 &&
+                      groupedEvents[timeSlot].map((event, idx) => (
+                        <div
+                          key={idx}
+                          className={cn(
+                            "text-white p-2 rounded mb-2 mt-2",
+                            (event.type === "session" || event.type === "appointment") && "cursor-pointer"
+                          )}
+                          style={getEventBgColor(event)}
+                          onClick={() => handleEventClick(event)}
+                        >
+                          <div className="font-medium mb-1">{event.name}</div>
+                          <div>
+                            {event.type === "appointment" && event.member && (
+                              <div className="text-xs opacity-75">
+                                {`${event.member.firstName} ${event.member.lastName}`}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex justify-between">
+                            {event.startTime && event.endTime && (
+                              <div className="text-xs opacity-75">
+                                {`${formatTime(event.startTime)} - ${formatTime(event.endTime)}`}
+                              </div>
+                            )}
+                            {event.type === "session" && event.capacity !== undefined && event.bookings !== undefined && (
+                              <div className="text-xs opacity-75">
+                                {`${event.bookings}/${event.capacity}`}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+);
+
+Timeline.displayName = "Timeline";
+
+export { Timeline };

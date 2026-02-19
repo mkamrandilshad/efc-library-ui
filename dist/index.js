@@ -873,6 +873,36 @@ var CardFooter = React39__namespace.forwardRef(({ className, ...props }, ref) =>
   }
 ));
 CardFooter.displayName = "CardFooter";
+var CardRow = React39__namespace.forwardRef(({ className, ...props }, ref) => /* @__PURE__ */ jsxRuntime.jsx(
+  "div",
+  {
+    ref,
+    className: cn("flex gap-4", className),
+    ...props
+  }
+));
+CardRow.displayName = "CardRow";
+var CardCreator = React39__namespace.forwardRef(
+  ({ className, creatorAvatar, creatorTitle, creatorSubtitle, profileLinkId, onProfileClick, avatarComponent: Avatar2, linkComponent: Link3, ...props }, ref) => {
+    const DefaultAvatar = Avatar2 || (({ img, className: avatarClassName }) => img ? /* @__PURE__ */ jsxRuntime.jsx("img", { src: img, alt: "Avatar", className: cn("w-10 h-10 rounded-full", avatarClassName) }) : /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("w-10 h-10 rounded-full bg-gray-300", avatarClassName) }));
+    const DefaultLink = Link3 || (({ to, className: linkClassName, children }) => /* @__PURE__ */ jsxRuntime.jsx("button", { onClick: () => onProfileClick?.(to), className: cn("hover:underline font-semibold text-secondary-foreground", linkClassName), children }));
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { ref, className: cn("flex items-center", className), ...props, children: [
+      /* @__PURE__ */ jsxRuntime.jsx(DefaultAvatar, { img: creatorAvatar }),
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex justify-start items-start flex-col ml-4", children: [
+        profileLinkId ? /* @__PURE__ */ jsxRuntime.jsx(
+          DefaultLink,
+          {
+            to: profileLinkId,
+            className: "hover:underline font-semibold text-secondary-foreground",
+            children: creatorTitle
+          }
+        ) : creatorTitle && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-semibold text-foreground", children: creatorTitle }),
+        creatorSubtitle && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-muted-foreground print:h-0 overflow-hidden", children: creatorSubtitle })
+      ] })
+    ] });
+  }
+);
+CardCreator.displayName = "CardCreator";
 var CarouselContext = React39__namespace.createContext(null);
 function useCarousel() {
   const context = React39__namespace.useContext(CarouselContext);
@@ -4379,7 +4409,16 @@ var Switch = React39__namespace.forwardRef(({ className, ...props }, ref) => /* 
   SwitchPrimitives__namespace.Root,
   {
     className: cn(
-      "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+      // Base styles - neutral and theme-agnostic
+      "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors",
+      // Focus styles - using neutral colors
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+      // States - using neutral colors that can be overridden
+      "data-[state=checked]:bg-gray-900 data-[state=unchecked]:bg-gray-200",
+      "dark:data-[state=checked]:bg-gray-100 dark:data-[state=unchecked]:bg-gray-700",
+      // Disabled state
+      "disabled:cursor-not-allowed disabled:opacity-50",
+      // Allow customization
       className
     ),
     ...props,
@@ -4388,7 +4427,15 @@ var Switch = React39__namespace.forwardRef(({ className, ...props }, ref) => /* 
       SwitchPrimitives__namespace.Thumb,
       {
         className: cn(
-          "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+          // Base thumb styles
+          "pointer-events-none block h-5 w-5 rounded-full transition-transform",
+          // Thumb colors - neutral with dark mode support
+          "bg-white dark:bg-gray-900",
+          "shadow-md dark:shadow-lg",
+          // Animation
+          "data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0",
+          // Allow customization
+          className
         )
       }
     )
@@ -4702,8 +4749,29 @@ var CustomTable = React39__namespace.forwardRef(
   }
 );
 CustomTable.displayName = "CustomTable";
-var Tabs = React39__namespace.forwardRef(({ tabs, activeTab, onTabChange, showMobileNav = false, className, ...props }, ref) => {
-  const [value, setValue] = React39__namespace.useState(activeTab || tabs[0]?.id);
+var Tabs = React39__namespace.forwardRef(({
+  tabs,
+  activeTab,
+  onTabChange,
+  showMobileNav = false,
+  className,
+  listClassName,
+  triggerClassName,
+  mobileClassName,
+  mobileButtonClassName,
+  // Color props with hex defaults
+  borderColor = "#d4d4d8",
+  activeTextColor = "#000000",
+  inactiveTextColor = "#71717a",
+  hoverBorderColor = "#0000ff",
+  activeIconColor = "#0000ff",
+  inactiveIconColor = "#71717a",
+  mobileBorderColor = "#0000ff",
+  // Size props with defaults
+  iconSize = 20,
+  ...props
+}, ref) => {
+  const [value, setValue] = React39__namespace.useState(activeTab || tabs?.[0]?.id);
   React39__namespace.useEffect(() => {
     if (activeTab !== void 0) setValue(activeTab);
   }, [activeTab]);
@@ -4719,49 +4787,83 @@ var Tabs = React39__namespace.forwardRef(({ tabs, activeTab, onTabChange, showMo
         value,
         onValueChange: handleValueChange,
         ...props,
-        children: /* @__PURE__ */ jsxRuntime.jsx(TabsPrimitive__namespace.List, { className: "border-b-[1.5px] border-b-zinc-300 bg-card rounded rounded-b-none pl-2 min-w-full justify-start max-lg:hidden", children: tabs.map((tab) => /* @__PURE__ */ jsxRuntime.jsx(
-          TabsPrimitive__namespace.Trigger,
+        children: /* @__PURE__ */ jsxRuntime.jsx(
+          TabsPrimitive__namespace.List,
           {
-            value: tab.id,
-            className: cn(
-              "p-2 pt-3 pb-3 focus:outline-none font-semibold border-b-[4px] transition",
-              value === tab.id ? "text-foreground border-b-primary" : "text-muted-foreground border-transparent hover:border-b-primary dark:hover:border-b-blue-600"
-            ),
-            children: tab.renderLabel || tab.label
-          },
-          tab.id
-        )) })
+            className: cn("border-b-[1.5px] bg-card rounded rounded-b-none pl-2 min-w-full justify-start max-lg:hidden", listClassName),
+            style: {
+              borderBottomColor: borderColor
+            },
+            children: tabs.map((tab) => /* @__PURE__ */ jsxRuntime.jsx(
+              TabsPrimitive__namespace.Trigger,
+              {
+                value: tab.id,
+                className: cn(
+                  "p-2 pt-3 pb-3 focus:outline-none font-semibold border-b-[4px] transition border-transparent",
+                  value === tab.id && "border-b-primary",
+                  triggerClassName
+                ),
+                style: {
+                  color: value === tab.id ? activeTextColor : inactiveTextColor,
+                  borderBottomColor: value === tab.id ? hoverBorderColor : "transparent"
+                },
+                onMouseEnter: (e) => {
+                  if (value !== tab.id) {
+                    e.currentTarget.style.borderBottomColor = hoverBorderColor;
+                  }
+                },
+                onMouseLeave: (e) => {
+                  if (value !== tab.id) {
+                    e.currentTarget.style.borderBottomColor = "transparent";
+                  }
+                },
+                children: tab.renderLabel || tab.label
+              },
+              tab.id
+            ))
+          }
+        )
       }
     ),
-    showMobileNav && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t-2 border-primary", children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex justify-around items-center h-10 px-4", children: tabs.map((tab) => {
-      const isActive = value === tab.id;
-      return /* @__PURE__ */ jsxRuntime.jsx(
-        "button",
-        {
-          onClick: () => handleValueChange(tab.id),
-          className: cn(
-            "h-9 border-b-2 transition",
-            isActive ? "border-primary dark:border-blue-600" : "border-transparent"
-          ),
-          children: tab.icon && /* @__PURE__ */ jsxRuntime.jsx(
-            tab.icon,
-            {
-              size: 20,
-              className: cn(
-                isActive ? "text-primary dark:text-blue-400" : "text-muted-foreground"
-              )
-            }
-          )
+    showMobileNav && /* @__PURE__ */ jsxRuntime.jsx(
+      "div",
+      {
+        className: cn("lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-card border-t-2", mobileClassName),
+        style: {
+          borderTopColor: mobileBorderColor
         },
-        tab.id
-      );
-    }) }) })
+        children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex justify-around items-center h-10 px-4", children: tabs.map((tab) => {
+          const isActive = value === tab.id;
+          return /* @__PURE__ */ jsxRuntime.jsx(
+            "button",
+            {
+              onClick: () => handleValueChange(tab.id),
+              className: cn(
+                "h-9 border-b-2 transition border-transparent",
+                isActive && "border-b-primary",
+                mobileButtonClassName
+              ),
+              style: {
+                borderBottomColor: isActive ? mobileBorderColor : "transparent"
+              },
+              children: tab.icon && /* @__PURE__ */ jsxRuntime.jsx(
+                tab.icon,
+                {
+                  size: iconSize,
+                  style: {
+                    color: isActive ? activeIconColor : inactiveIconColor
+                  }
+                }
+              )
+            },
+            tab.id
+          );
+        }) })
+      }
+    )
   ] });
 });
 Tabs.displayName = "Tabs";
-var TabsList = TabsPrimitive__namespace.List;
-var TabsTrigger = TabsPrimitive__namespace.Trigger;
-var TabsContent = TabsPrimitive__namespace.Content;
 var toggleVariants = classVarianceAuthority.cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 gap-2",
   {
@@ -5233,8 +5335,18 @@ var FeedPost = React39__namespace.forwardRef(
   }
 );
 FeedPost.displayName = "FeedPost";
-var parseTime = (timeStr) => {
-  const [time, period] = timeStr.split(" ");
+var formatTime = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+  return `${displayHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
+var getTimeValue = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+var getSlotRange = (slot) => {
+  const [time, period] = slot.split(" ");
   const [hours, minutes] = time.split(":").map(Number);
   let hour24 = hours;
   if (period) {
@@ -5244,173 +5356,108 @@ var parseTime = (timeStr) => {
       hour24 = 0;
     }
   }
-  return hour24 + minutes / 60;
+  const slotStart = hour24 * 60 + (minutes || 0);
+  const slotEnd = slotStart + 60;
+  return [slotStart, slotEnd];
 };
-var groupEventsByTimeSlot = (items, timeSlotDuration, startHour) => {
-  const sortedItems = [...items].sort((a, b) => parseTime(a.startTime) - parseTime(b.startTime));
-  const timeSlots = {};
-  for (const item of sortedItems) {
-    const startMinutes = parseTime(item.startTime) * 60;
-    const startHourMinutes = startHour * 60;
-    const adjustedMinutes = startMinutes - startHourMinutes;
-    const timeSlotIndex = Math.floor(adjustedMinutes / timeSlotDuration);
-    if (!timeSlots[timeSlotIndex]) {
-      timeSlots[timeSlotIndex] = [];
-    }
-    timeSlots[timeSlotIndex].push(item);
+var generateTimeSlots = (items) => {
+  if (items.length === 0) return ["12:00 AM"];
+  const allStartTimes = items.map((item) => item.startTime);
+  const earliestStartTime = allStartTimes.reduce((earliest, current) => current < earliest ? current : earliest, "23:59:59");
+  const latestStartTime = allStartTimes.reduce((latest, current) => current > latest ? current : latest, "00:00:00");
+  const earliestHour = parseInt(earliestStartTime.split(":")[0]);
+  const latestHour = parseInt(latestStartTime.split(":")[0]);
+  const timeSlots = [];
+  for (let hour = earliestHour; hour <= latestHour + 1; hour++) {
+    const period = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    timeSlots.push(`${displayHour.toString().padStart(2, "0")}:00 ${period}`);
   }
   return timeSlots;
 };
-var getCumulativeHeight = (slotIndex, slotHeights) => {
-  let totalHeight = 0;
-  for (let i = 0; i < slotIndex; i++) {
-    if (slotHeights[i]) {
-      totalHeight += slotHeights[i];
-    }
-  }
-  return totalHeight;
-};
-var flattenTimeSlots = (timeSlots) => {
-  const itemsWithSlots = [];
-  Object.keys(timeSlots).sort((a, b) => Number(a) - Number(b)).forEach((slotKey) => {
-    const slotIndex = Number(slotKey);
-    timeSlots[slotIndex].forEach((item, index) => {
-      itemsWithSlots.push({
-        ...item,
-        timeSlot: slotIndex,
-        slotIndex: index
-      });
+var groupByTime = (items, timeSlots) => {
+  const grouped = {};
+  timeSlots.forEach((slot) => {
+    const [startSlot, endSlot] = getSlotRange(slot);
+    grouped[slot] = [];
+    items.forEach((item) => {
+      const eventStartTime = getTimeValue(item.startTime);
+      if (eventStartTime >= startSlot && eventStartTime < endSlot) {
+        grouped[slot].push(item);
+      }
     });
   });
-  return itemsWithSlots;
-};
-var calculateSlotHeights = (timeSlots, timeSlotDuration, eventHeight, eventGap, startHour, endHour, minSlotHeight) => {
-  const slotHeights = {};
-  const totalSlots = (endHour - startHour + 1) * 60 / timeSlotDuration;
-  for (let slotIndex = 0; slotIndex < totalSlots; slotIndex++) {
-    const eventsInSlot = timeSlots[slotIndex] || [];
-    if (eventsInSlot.length > 0) {
-      const requiredHeight = eventsInSlot.length * eventHeight + (eventsInSlot.length - 1) * eventGap;
-      slotHeights[slotIndex] = requiredHeight;
-    } else {
-      slotHeights[slotIndex] = minSlotHeight;
-    }
-  }
-  return slotHeights;
+  return grouped;
 };
 var Timeline = React39__namespace.forwardRef(
   ({
     className,
-    items,
-    startHour = 0,
-    endHour = 24,
-    hourFormat = "12h",
-    title,
-    timeSlotDuration = 30,
-    // Default 30 minutes
-    eventGap = 4,
-    // Default 4 pixels gap between events
-    minSlotHeight = 80,
-    // Default 80 pixels minimum slot height
-    maxSlotHeight,
+    items = [],
+    loading = false,
+    title = "Agenda",
+    emptyMessage = "There is nothing on the Agenda today",
+    sessionColor,
+    appointmentColor,
+    reminderColor = "#9b76a0",
+    textColor = "#ffffff",
+    skeletonComponent: Skeleton2,
+    emptyComponent: EmptyComponent,
+    onSessionClick,
+    onMemberClick,
     ...props
   }, ref) => {
-    const fixedEventHeight = 60;
-    const timeSlots = groupEventsByTimeSlot(items, timeSlotDuration, startHour);
-    const slotHeights = calculateSlotHeights(
-      timeSlots,
-      timeSlotDuration,
-      fixedEventHeight,
-      eventGap,
-      startHour,
-      endHour,
-      minSlotHeight
-    );
-    const itemsWithSlots = flattenTimeSlots(timeSlots);
-    const getItemPosition = (item) => {
-      const slotIndex = item.timeSlot || 0;
-      const eventIndex = item.slotIndex || 0;
-      const cumulativeHeight = getCumulativeHeight(slotIndex, slotHeights);
-      const topPixels = cumulativeHeight + 38;
-      const verticalOffset = eventIndex * (fixedEventHeight + eventGap);
-      return {
-        top: `${topPixels + verticalOffset}px`,
-        height: `${fixedEventHeight}px`,
-        left: "3%",
-        // Fixed left position for full width
-        width: "94%"
-        // Full width for all events
-      };
-    };
-    const itemsWithPositions = itemsWithSlots.map((item) => ({
-      ...item,
-      position: getItemPosition(item)
-    }));
-    return /* @__PURE__ */ jsxRuntime.jsxs(
-      Card,
-      {
-        ref,
-        className: cn("", className),
-        ...props,
-        children: [
-          title && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "px-6 py-4  ", children: /* @__PURE__ */ jsxRuntime.jsx("h2", { className: "text-lg font-semibold ", children: title }) }),
-          /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "relative w-full px-8 py-6", children: [
-            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "relative", children: Array.from({ length: (endHour - startHour + 1) * 60 / timeSlotDuration }).map((_, slotIndex) => {
-              const slotHeight = slotHeights[slotIndex] || minSlotHeight;
-              const slotStartTimeInMinutes = slotIndex * timeSlotDuration + startHour * 60;
-              const displayHour = Math.floor(slotStartTimeInMinutes / 60);
-              const displayMinute = slotStartTimeInMinutes % 60;
-              const period = displayHour >= 12 ? "PM" : "AM";
-              const hour12 = displayHour > 12 ? displayHour - 12 : displayHour === 0 ? 12 : displayHour;
-              const timeLabel = `${hour12.toString().padStart(2, "0")}:${displayMinute.toString().padStart(2, "0")} ${period}`;
-              return /* @__PURE__ */ jsxRuntime.jsx(
-                "div",
-                {
-                  className: "flex items-start relative",
-                  style: {
-                    height: `${slotHeight}px`
-                  },
-                  children: /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-sm font-normal text-foreground w-20 flex-shrink-0 -mt-2", children: timeLabel })
-                },
-                slotIndex
-              );
-            }) }),
-            /* @__PURE__ */ jsxRuntime.jsx("div", { className: "absolute inset-0", children: itemsWithPositions.map((item) => {
-              const { position } = item;
-              return /* @__PURE__ */ jsxRuntime.jsx(
-                "div",
-                {
-                  className: cn(
-                    "rounded-lg p-2 shadow-sm border-0 absolute"
-                  ),
-                  style: {
-                    top: position.top,
-                    height: position.height,
-                    backgroundColor: item.color || "#7c3aed",
-                    left: position.left,
-                    width: position.width
-                  },
-                  children: /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex flex-col justify-center", children: [
-                    /* @__PURE__ */ jsxRuntime.jsx("span", { className: "font-semibold text-sm leading-tight truncate", style: { color: item.textColor || "#ffffff" }, children: item.title }),
-                    /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "text-xs opacity-75", style: { color: item.textColor || "#ffffff" }, children: [
-                      item.startTime,
-                      " - ",
-                      item.endTime
-                    ] }),
-                    item.capacity && /* @__PURE__ */ jsxRuntime.jsxs("span", { className: "text-xs font-medium opacity-90 self-end", style: { color: item.textColor || "#ffffff" }, children: [
-                      item.capacity.current,
-                      "/",
-                      item.capacity.max
-                    ] })
-                  ] })
-                },
-                item.id
-              );
-            }) })
-          ] })
-        ]
+    const fixedTimeSlots = generateTimeSlots(items);
+    const groupedEvents = groupByTime(items, fixedTimeSlots);
+    const getEventBgColor = (event) => {
+      if (event.type === "session") {
+        return { backgroundColor: sessionColor || "#76a09b" };
+      } else if (event.type === "appointment") {
+        return { backgroundColor: appointmentColor || "#7c3aed" };
+      } else {
+        return { backgroundColor: reminderColor };
       }
-    );
+    };
+    const handleEventClick = (event) => {
+      if (event.onClick) {
+        event.onClick();
+      } else if (event.type === "session" && event.date && onSessionClick) {
+        onSessionClick(event.date, event.id);
+      } else if (event.type === "appointment" && event.member && onMemberClick) {
+        onMemberClick(event.member.id);
+      }
+    };
+    const DefaultSkeleton = Skeleton2 || (({ height = 50, className: className2 }) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: cn("bg-gray-200 rounded animate-pulse", className2), style: { height } }));
+    const DefaultEmpty = EmptyComponent || (({ label }) => /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-center text-muted-foreground py-8", children: label }));
+    const noData = !loading && items.length === 0;
+    return /* @__PURE__ */ jsxRuntime.jsxs(Card, { className: cn("lg:w-1/2 max-lg:w-full", className), ref, ...props, children: [
+      /* @__PURE__ */ jsxRuntime.jsx(CardHeader, { children: /* @__PURE__ */ jsxRuntime.jsx(CardTitle, { children: title }) }),
+      /* @__PURE__ */ jsxRuntime.jsx(CardContent, { children: noData ? /* @__PURE__ */ jsxRuntime.jsx(DefaultEmpty, { label: emptyMessage }) : fixedTimeSlots.map((timeSlot, index) => /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "pl-1 mb-4 w-full", children: [
+        /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center w-full", children: [
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-secondary-foreground w-24", children: timeSlot }),
+          /* @__PURE__ */ jsxRuntime.jsx("div", { className: "my-2 border-t border-border-color w-5/6" })
+        ] }),
+        loading ? /* @__PURE__ */ jsxRuntime.jsx(DefaultSkeleton, { height: 50 }) : /* @__PURE__ */ jsxRuntime.jsx("div", { children: groupedEvents[timeSlot] && groupedEvents[timeSlot].length > 0 && groupedEvents[timeSlot].map((event, idx) => /* @__PURE__ */ jsxRuntime.jsxs(
+          "div",
+          {
+            className: cn(
+              "text-white p-2 rounded mb-2 mt-2",
+              (event.type === "session" || event.type === "appointment") && "cursor-pointer"
+            ),
+            style: getEventBgColor(event),
+            onClick: () => handleEventClick(event),
+            children: [
+              /* @__PURE__ */ jsxRuntime.jsx("div", { className: "font-medium mb-1", children: event.name }),
+              /* @__PURE__ */ jsxRuntime.jsx("div", { children: event.type === "appointment" && event.member && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-xs opacity-75", children: `${event.member.firstName} ${event.member.lastName}` }) }),
+              /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex justify-between", children: [
+                event.startTime && event.endTime && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-xs opacity-75", children: `${formatTime(event.startTime)} - ${formatTime(event.endTime)}` }),
+                event.type === "session" && event.capacity !== void 0 && event.bookings !== void 0 && /* @__PURE__ */ jsxRuntime.jsx("div", { className: "text-xs opacity-75", children: `${event.bookings}/${event.capacity}` })
+              ] })
+            ]
+          },
+          idx
+        )) })
+      ] }, index)) })
+    ] });
   }
 );
 Timeline.displayName = "Timeline";
@@ -13837,9 +13884,11 @@ exports.Calendar = Calendar;
 exports.CalendarDayButton = CalendarDayButton;
 exports.Card = Card;
 exports.CardContent = CardContent;
+exports.CardCreator = CardCreator;
 exports.CardDescription = CardDescription;
 exports.CardFooter = CardFooter;
 exports.CardHeader = CardHeader;
+exports.CardRow = CardRow;
 exports.CardTitle = CardTitle;
 exports.Carousel = Carousel;
 exports.CarouselContent = CarouselContent;
@@ -14082,9 +14131,6 @@ exports.TableHeader = TableHeader;
 exports.TableHeaderCell = TableHeaderCell;
 exports.TableRow = TableRow;
 exports.Tabs = Tabs;
-exports.TabsContent = TabsContent;
-exports.TabsList = TabsList;
-exports.TabsTrigger = TabsTrigger;
 exports.Textarea = Textarea;
 exports.ThemeProvider = ThemeProvider;
 exports.Timeline = Timeline;
